@@ -5,7 +5,7 @@ public class Client {
 	boolean myTurn = false;
 	boolean wait = true;
 	String host = "127.0.0.1";
-	int port = 8081;
+	int port = 9001;
 	
 	public void getServerInfo() {
 		// Enter Server IP
