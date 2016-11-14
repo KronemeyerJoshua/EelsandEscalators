@@ -1,7 +1,11 @@
 import java.net.*;
 import java.io.*;
+import javax.swing.*;
+import java.awt.*;
 
-public class EelsAndEscalatorsServer implements EelsAndEscalatorsInterface {
+
+
+public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalatorsInterface {
 	
 	// Global Vars
 	int numOfPlayers;
@@ -9,13 +13,12 @@ public class EelsAndEscalatorsServer implements EelsAndEscalatorsInterface {
 	int[] playerCharacterChoice;
 	
 	public static void main(String[] args) {
+		EelsAndEscalatorsServer server = new EelsAndEscalatorsServer();
+		System.out.println("Server started");
 	}
 	
 	// Default Constructor
-	public void EelsAndEscalatorServer() {
-		numOfPlayers = 0;
-		turnOrder = new int[4];
-		playerCharacterChoice = new int[4];
+	public EelsAndEscalatorsServer() {	
 		
 		// Attempt to Host Server
 		try {
@@ -40,10 +43,15 @@ public class EelsAndEscalatorsServer implements EelsAndEscalatorsInterface {
 				//new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER3);
 				//new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER4);
 				
+				// DEBUGGING NOTE: NEED TO ADD PLAYERS TO CONSTRUCTOR
+				//2-4 WHEN TESTING OF PLAYER1 IS FINISHED
+				GameSession session = new GameSession(player1);
+				
+				new Thread(session).start();
 			}
 		}
 		catch (Exception e) {
-			
+			System.out.println(e.toString());
 		}
 	}
 	
@@ -53,7 +61,7 @@ public class EelsAndEscalatorsServer implements EelsAndEscalatorsInterface {
 			numOfPlayers++;
 		}
 		else {
-			System.out.println(max_Connected);
+			System.out.println(MAX_CONNECTED);
 		}
 	}
 	
@@ -71,7 +79,44 @@ public class EelsAndEscalatorsServer implements EelsAndEscalatorsInterface {
 
 class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
+	// Create our sockets to player clients
+	private Socket player1;
+	//private Socket player2;
+	//private Socket player3;
+	//private Socket player4;
+	
+	// Constructor
+	// DEBUGGING NOTE: NEED TO ADD PLAYERS TO CONSTRUCTOR
+	//2-4 WHEN TESTING OF PLAYER1 IS FINISHED
+	//@param1 Our socket connection to player client
+	public GameSession(Socket player1) {
+		
+		// Initialize our player connections before game start
+		this.player1 = player1;
+		// this.player2 = player2;
+		// this.player3 = player3;
+		// this.player4 = player4;
+	}
+	
 	public void run() {
+		try {
+			// Initialize our in and out streams to send/receive from our player clients
+			DataInputStream fromP1 = new DataInputStream(player1.getInputStream());
+			//DataInputStream fromP2 = new DataInputStream(player2.getInputStream());
+			//DataInputStream fromP3 = new DataInputStream(player3.getInputStream());
+			//DataInputStream fromP4 = new DataInputStream(player4.getInputStream());
+			
+			DataOutputStream toP1 = new DataOutputStream(player1.getOutputStream());
+			//DataOutputStream toP2 = new DataOutputStream(player2.getOutputStream());
+			//DataOutputStream toP3 = new DataOutputStream(player3.getOutputStream());
+			//DataOutputStream toP4 = new DataOutputStream(player4.getOutputStream());
+			
+			while (true) {
+			}
+		}
+		catch (Exception e) {
+			System.out.println(e.toString());
+		}
 		
 	}
 	
