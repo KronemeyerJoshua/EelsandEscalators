@@ -10,7 +10,7 @@ import java.net.*;
 public class ClientFrame extends JFrame {
 
 	// Declare Vars
-	private JPanel contentPane;
+	private JLabel contentPane;
 	private boolean myTurn = false;
 	private boolean wait = true;
 	private String host = "127.0.0.1";
@@ -42,15 +42,13 @@ public class ClientFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1920, 1080);
 		setResizable(false);
-		contentPane = new JPanel();
+		contentPane = new JLabel(new ImageIcon("src/bg.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
 		
-		JLabel background = new JLabel(new ImageIcon("src/bg.jpg"));
-		contentPane.add(background, BorderLayout.CENTER);
-		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(18, 148, 203));
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panel, BorderLayout.SOUTH);
