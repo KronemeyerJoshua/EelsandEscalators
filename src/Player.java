@@ -72,12 +72,12 @@ public class Player {
 	
 	// Accessors
 	
-	//@return Player's Location
+	//@return Player's X Location
 	public int getLocationX() {
 		return playerLocation[0];
 	}
 	
-	//@return Player's Location
+	//@return Player's Y Location
 		public int getLocationY() {
 			return playerLocation[1];
 		}
