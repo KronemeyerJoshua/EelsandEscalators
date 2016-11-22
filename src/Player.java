@@ -25,7 +25,7 @@ public class Player {
 	}
 	
 	// Constructor
-	public Player(int character, int token, String name) { //removed loc, as there should be a set default for starting
+	public Player(int character, int token, String name) {
 		playerLocation[0] = 0;
 		playerLocation[1] = 0;
 		playerCharacter = character;
@@ -35,22 +35,19 @@ public class Player {
 	
 	
 	// Mutators
-	public void movePlayer(int roll){ //used after the dice has been rolled
-		if (roll != 0){
-			if((this.playerLocation[0] == 10 && this.playerLocation[1] == 0) || (this.playerLocation[0] == 0 && this.playerLocation[1] == 1)) //moves player to the next upper platform
-				playerLocation[1]++;			
-			else if(playerLocation[1] == 1) //moves player to the left if in the middle section
-				playerLocation[0]--;
-			else //moves player normally to the right
-				playerLocation[0]++;
-				
-			movePlayer(roll-1);
-		}	
-	}
+
 	
 	//@param1 Player Location
 	public void setLocation(int locX, int locY) {
 		playerLocation[0] = locX;
+		playerLocation[1] = locY;
+	}
+	
+	public void setXLocation(int locX) {
+		playerLocation[0] = locX;
+	}
+	
+	public void setYLocation(int locY) {
 		playerLocation[1] = locY;
 	}
 	
@@ -73,12 +70,12 @@ public class Player {
 	// Accessors
 	
 	//@return Player's X Location
-	public int getLocationX() {
+	public int getXLocation() {
 		return playerLocation[0];
 	}
 	
 	//@return Player's Y Location
-		public int getLocationY() {
+		public int getYLocation() {
 			return playerLocation[1];
 		}
 	
