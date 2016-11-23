@@ -24,4 +24,5 @@ public interface EelsAndEscalatorsInterface {
 	int SQUIDWARD = 124;
 	int SPONGEBOB = 125;
 	int PATRICK = 126;
+	
 }

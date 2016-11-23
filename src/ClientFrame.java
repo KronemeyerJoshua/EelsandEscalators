@@ -26,8 +26,10 @@ public class ClientFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+
 					ClientFrame frame = new ClientFrame();
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,7 +44,7 @@ public class ClientFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1920, 1080);
 		setResizable(false);
-		contentPane = new JLabel(new ImageIcon("src/bg.jpg"));
+		contentPane = new JLabel(new ImageIcon("src/EelsAndEscalatorsYouLose.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
@@ -56,12 +58,12 @@ public class ClientFrame extends JFrame {
 		JButton btnRoll = new JButton("Roll");
 		panel.add(btnRoll);
 		
-		JLabel lblDi = new JLabel("Di1");
+		JLabel lblDi = new JLabel("Dice 1");
 		panel.add(lblDi);
 		
-		JLabel lblDi_1 = new JLabel("Di2");
+		JLabel lblDi_1 = new JLabel("Dice 2");
 		panel.add(lblDi_1);
-		
+	
 	}
 	
 	public void getServerInfo() {
