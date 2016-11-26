@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -61,7 +63,17 @@ public class LauncherFrame extends JFrame {
 		
 		JButton btnCancel = new JButton("Cancel");
 		panel.add(btnCancel);
+		
+		btnHost.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EelsAndEscalatorsServer server = new EelsAndEscalatorsServer();
+				panel.remove(btnClient);
+				panel.remove(btnHost);
+				outputText.append("Server now started");
+			}
+		});
 	}
+	
 	
 	public class ConsoleArea{
 		private final JTextArea textArea;
