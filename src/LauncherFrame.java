@@ -47,6 +47,11 @@ public class LauncherFrame extends JFrame {
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panel, BorderLayout.SOUTH);
+        
+        //Text Area, use outputText.append() to send stuff
+        JTextArea outputText = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(outputText);
+        contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		JButton btnClient = new JButton("Client");
 		panel.add(btnClient);
