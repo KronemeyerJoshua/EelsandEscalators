@@ -1,11 +1,13 @@
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.io.*;
 import java.net.*;
 
-public class ClientFrame extends JFrame {
+public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface {
 
 	// Declare Vars
 	private JLabel contentPane;
@@ -26,7 +28,7 @@ public class ClientFrame extends JFrame {
 				try {
 
 					ClientFrame frame = new ClientFrame();
-					frame.setVisible(true);
+					frame.connectToServer();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -40,21 +42,30 @@ public class ClientFrame extends JFrame {
 	 */
 	public ClientFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1920, 1080);
+		setBounds(100, 100, 1844, 1080);
 		setResizable(false);
 		contentPane = new JLabel(new ImageIcon("src/EelsAndEscalatorsYouLose.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
+		setVisible(true);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(18, 148, 203));
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
 		JButton btnRoll = new JButton("Roll");
 		panel.add(btnRoll);
+		
+		btnRoll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+				outputStream.writeInt(SEND_ROLL_REQUEST);
+				} catch (Exception err) {
+					System.out.println(err.toString());
+				}
+			}
+		});
 		
 		JLabel lblDi = new JLabel("Dice 1");
 		panel.add(lblDi);
@@ -68,7 +79,7 @@ public class ClientFrame extends JFrame {
 		// Enter Server IP
 		// Enter Server Port
 		// Check format of IP & Port
-		if (connectToServer(host,port)) {
+		if (connectToServer()) {
 			System.out.println("Successfully connected!");
 		}
 	}
@@ -76,10 +87,10 @@ public class ClientFrame extends JFrame {
 	//@param1 Host of server
 	//@param2 Port of server
 	//@return Server connected status
-	public boolean connectToServer(String h, int p) {
+	public boolean connectToServer() {
 		try {
 			// Create our socket to connect to the server
-			Socket socket = new Socket(h, p);
+			Socket socket = new Socket(host, port);
 			
 			// Client in and out streams to and from the server
 			inputStream = new DataInputStream(socket.getInputStream());
@@ -94,10 +105,6 @@ public class ClientFrame extends JFrame {
 		return true;
 	}
 	
-	  /** Send this player's move to the server */
-	  private void sendMove() throws IOException {
-	    outputStream.writeInt(this.rollDice()); // Send the selected row
-	   
-	  }
+
 
 }
