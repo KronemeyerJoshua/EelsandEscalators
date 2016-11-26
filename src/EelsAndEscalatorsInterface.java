@@ -12,6 +12,9 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER3_WIN = 33;
 	int PLAYER4_WIN = 44;
 	
+	// Actions Performed
+	int SEND_ROLL_REQUEST = 99;
+	
 	// Any string constants should be put below this line
 	String ROLLDICEMSG = "Please roll dice.";
 	String CHARSELECTMESSAGE = "Select your character";
