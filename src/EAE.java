@@ -2,13 +2,13 @@ import java.util.Random;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class EAE<P> extends LinkedList<Player> {
+public class EAE<P> extends LinkedList<P> {
 
 	//basic implementations needed
 	private Random rand = new Random();
 	
 	 //basic elements
-	final int MAP_X = 9; int MAP_Y = 2;
+	final int MAP_X = 10; int MAP_Y = 3;
 	private Tile<Player>[][] map; //map
 	private Player currentPlayerTurn;	// current player's turn
 	
@@ -20,28 +20,41 @@ public class EAE<P> extends LinkedList<Player> {
 	
 	public EAE(){
 		playerTurns = new LinkedList<Player>();	
+		Player player1 = new Player();
+		Player player2 = new Player();
+		Player player3 = new Player();
+		Player player4 = new Player();
+		
+		this.setNumPlayers();
+		
+		if(this.getNumPlayers() == 1){
+			this.addPlayer(player1);
+		}
+		else if(this.getNumPlayers() == 2){
+			this.addPlayer(player1);
+			this.addPlayer(player2);
+		}
+		else if(this.getNumPlayers() == 3){
+			this.addPlayer(player1);
+			this.addPlayer(player2);
+			this.addPlayer(player3);
+		}
+		else if(this.getNumPlayers() == 4){
+			this.addPlayer(player1);
+			this.addPlayer(player2);
+			this.addPlayer(player3);
+			this.addPlayer(player4);
+		}
 	}
 	
 	public int rollDice(){	
 		return rand.nextInt() % 5 +1 ; // dice implementation
 	}
-	
-	public void addPlayer(Player player, String playerName, int playerCharacter, int playerToken){ //allows modification of player info
-		if(numPlayers !=4){
-			player = new Player(playerCharacter,  playerToken, playerName);
-			addPlayer(player);
-			numPlayers++;
-		}
-		else{
-			
-		}
-	}
-	
-	
+
 	public void genMapDefault(){ //regular map generation
-		map = new Tile[MAP_Y+1][MAP_X+1];
-		for(int x = 0; x < MAP_X+1; x++){
-			for(int y = 0; y < MAP_Y+1; y++){
+		map = new Tile[MAP_Y][MAP_X];
+		for(int x = 0; x < MAP_X; x++){
+			for(int y = 0; y < MAP_Y; y++){
 				map[y][x] = new Tile<Player>();
 			}
 		}
@@ -49,6 +62,7 @@ public class EAE<P> extends LinkedList<Player> {
 		map[0][1].setEel1(true);
 		map[0][9].setEel1(true);
 		map[0][5].setEel2(true);
+		
 	}
 	
 	public void genMapRandom(){ //generates a random map
@@ -56,16 +70,18 @@ public class EAE<P> extends LinkedList<Player> {
 	}
 	
 	public void movePlayer(Player player){ //used after the dice has been rolled
+		map[player.getYLocation()][player.getXLocation()].removePlayer(player); //remove player from tile
+		
 		dice1 = rollDice();
 		dice2 = rollDice();
 		totalDice = dice1 + dice2;
 		int moveAmount;
 		
 		while(totalDice > 0)
-		if(player.getXLocation()+totalDice > MAP_X || (player.getXLocation()-totalDice < 0 && player.getYLocation() == 1)){
-			moveAmount = MAP_X - player.getXLocation(); //space between the end of the map and current Tile
+		if(player.getXLocation()+totalDice > MAP_X-1 || (player.getXLocation()-totalDice < 0 && player.getYLocation() == 1)){
+			moveAmount = (MAP_X-1) - player.getXLocation(); //space between the end of the map and current Tile
 			totalDice = totalDice - moveAmount - 1; //
-			player.setXLocation(MAP_X);
+			player.setXLocation(MAP_X-1);
 			player.setYLocation(player.getYLocation()+1);
 		}
 		else if(player.getYLocation() == 1){ //moves player to the left if in the middle section
@@ -76,31 +92,10 @@ public class EAE<P> extends LinkedList<Player> {
 			player.setXLocation(player.getXLocation()+1);
 			totalDice--;
 		}
+		
+		map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
 	}
 	
-	public void pushCurrentPlayerPosition(Tile<Player>[][] mapTemp, LinkedList<Player> playerTurnsTemp){ //resets the current map
-		for(int x = 0; x < MAP_X+1; x++){
-			for(int y = 0; y < MAP_Y+1; y++){
-				map[y][x].resetPlayers();
-			}
-		}
-		
-		int x, y;
-		Player[] playerArray = new Player[numPlayers];
-		playerTurnsTemp.toArray(playerArray);
-		
-		for(Player player : playerArray){ //iterates over the playerTurns list to place player on the correct tiles
-			
-			x = player.getXLocation();
-			y = player.getYLocation();
-			
-			map[y][x].addPlayer(player); 
-		}
-	}
-	
-	public void pushIndividualPlayerPosition(){
-		
-	}
 	
 	public int getNumPlayers(){
 		return numPlayers;
@@ -113,38 +108,22 @@ public class EAE<P> extends LinkedList<Player> {
 	public void removePlayer(Player player){
 		playerTurns.remove(player);
 	}
-	 
-	public static void main(String[] args) {
-		//Declarations
-		EAE game = new EAE();
-		Scanner scan = new Scanner(System.in);
-		Player player1 = new Player();
-		Player player2 = new Player();
-		Player player3 = new Player();
-		Player player4 = new Player();
-		
+	
+	public int setNumPlayers(){	//ask for the number of players
 		//Number of Players
-		int numPlayers;
+		Scanner scan = new Scanner(System.in);
 		System.out.println("How many players would you like to play?");
 		numPlayers = scan.nextInt();
+				
+		while (numPlayers > 4 || numPlayers < 1){
+			System.out.println("\nIncorrect value. Please enter another value.");
+			numPlayers = scan.nextInt();
+		}
 		
-		if(numPlayers == 1){
-			game.addPlayer(player1);
-		}
-		else if(numPlayers == 2){
-			game.addPlayer(player1);
-			game.addPlayer(player2);
-		}
-		else if(numPlayers == 3){
-			game.addPlayer(player1);
-			game.addPlayer(player2);
-			game.addPlayer(player3);
-		}
-		else if(numPlayers == 4){
-			game.addPlayer(player1);
-			game.addPlayer(player2);
-			game.addPlayer(player3);
-		}
-
+		return numPlayers;
+	}
+	 
+	public static void main(String[] args) {
+		EAE game = new EAE();
 	}
 }

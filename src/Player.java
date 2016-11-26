@@ -1,4 +1,5 @@
 import java.util.Random;
+import javax.swing.JPanel;
 
 /*
  * @Team Group_1
@@ -8,7 +9,7 @@ import java.util.Random;
  * 
  */
 
-public class Player {
+public class Player extends JPanel {
 	
 	// Declare Vars
 	int[] playerLocation = new int[2]; //[0] is x and [1] is y
@@ -19,7 +20,7 @@ public class Player {
 	
 	// Default Constructor
 	public Player() {
-		playerName = listNames[rand.nextInt()];
+		playerName = listNames[playerCharacter];
 		playerLocation[0] = 0;
 		playerLocation[1] = 0;
 	}
@@ -75,9 +76,9 @@ public class Player {
 	}
 	
 	//@return Player's Y Location
-		public int getYLocation() {
+	public int getYLocation() {
 			return playerLocation[1];
-		}
+	}
 	
 	//@return ID of player character
 	public int getCharacter() {

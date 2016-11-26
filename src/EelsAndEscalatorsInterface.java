@@ -25,4 +25,9 @@ public interface EelsAndEscalatorsInterface {
 	int SPONGEBOB = 125;
 	int PATRICK = 126;
 	
+	// Player Tokens
+	String MRKRABS_TOKEN = "123.png"; 
+	String SQUIDWARD_TOKEN = "124.png";
+	String SPONGEBOB_TOKEN = "125.png";
+	String PATRICK_TOKEN = "126.png";
 }

@@ -1,9 +1,7 @@
 import java.awt.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.io.*;
 import java.net.*;
 
@@ -95,5 +93,11 @@ public class ClientFrame extends JFrame {
 		// else
 		return true;
 	}
+	
+	  /** Send this player's move to the server */
+	  private void sendMove() throws IOException {
+	    outputStream.writeInt(this.rollDice()); // Send the selected row
+	   
+	  }
 
 }

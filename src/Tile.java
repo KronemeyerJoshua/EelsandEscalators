@@ -1,32 +1,44 @@
 import java.util.LinkedList;
+import javax.swing.JPanel;
 
-public class Tile<P> {
+public class Tile<P> extends JPanel {
 	
 	private LinkedList<P> currentPlayers; //players on tile
-	private boolean eel1, eel2, eel3, eel4, escalator, win, lose, start; //varying types of spots on the map
+	
+	private boolean eel1 = false; //varying types of tiles on the map
+	private boolean eel2 = false; 
+	private boolean eel3 = false; 
+	private boolean eel4 = false;
+	private boolean escalator = false; 
+	private boolean win = false;
+	private boolean lose = false;
+	private boolean start = false; 
+	
+	private int positionX = 0; //tile position
+	private int positionY = 0;	
+	
+	
 	
 	public Tile(){
 		LinkedList<P> currentPlayers = new LinkedList<P>();
-		eel1 = false;
-		eel2 = false;
-		eel3 = false;
-		eel4 = false;
-		escalator = false;
-		win = false;
-		lose = false;
-		start = false;
 	}
 	
-	public Tile(boolean eelInput1, boolean eelInput2, boolean eelInput3, boolean eelInput4, boolean escalatorInput, boolean winInput, boolean loseInput, boolean startInput){
-		LinkedList<P> currentPlayers = new LinkedList<P>();
-		eel1 = eelInput1;
-		eel2 = eelInput2;
-		eel3 = eelInput3;
-		eel4 = eelInput4;
-		escalator = escalatorInput;
-		win = winInput;
-		lose = loseInput;
-		start = startInput;
+	public Tile(int posX, int posY){
+		this();
+		positionX = posX;
+		positionY = posY;
+	}
+	
+	public void addPlayer(P player){
+		currentPlayers.add(player);
+	}
+	
+	public void removePlayer(P player){
+		currentPlayers.remove(player);
+	}
+	
+	public void resetPlayers(){
+		currentPlayers = new LinkedList<P>();
 	}
 	
 	//mutators
@@ -62,17 +74,53 @@ public class Tile<P> {
 		start = input;
 	}
 	
-	public void addPlayer(P player){
-		currentPlayers.add(player);
+	public void setPositionX(int posX){
+		positionX = posX;
 	}
 	
-	public void removePlayer(P player){
-		currentPlayers.remove(player);
+	public void setPositionY(int posY){
+		positionY = posY;
 	}
 	
-	public void resetPlayers(){
-		currentPlayers = new LinkedList<P>();
+	//accessors
+	public boolean getEel1(boolean input){
+		return eel1;
+	}
+		
+	public boolean getEel2(boolean input){
+		return eel2;
+	}
+		
+	public boolean getEel3(boolean input){
+		return eel3;
+	}
+		
+	public boolean getEel4(boolean input){
+		return eel4;
+	}
+		
+	public boolean getEscalator(boolean input){
+		return escalator;
+	}
+		
+	public boolean getWin(boolean input){
+		return win;
 	}
 	
+	public boolean getLose(boolean input){
+		return lose;
+	}
+		
+	public boolean getStart(boolean input){
+		return start;
+	}
+	
+	public int getPositionX(int posX){
+		return positionX;
+	}
+		
+	public int getPositionY(int posY){
+		return positionY;
+	}
 	
 }
