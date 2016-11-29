@@ -5,17 +5,17 @@ import java.util.Scanner;
 public class EAE<P> extends LinkedList<P> {
 
 	//basic implementations needed
-	private Random rand = new Random();
+	private Random rand = new Random(); //added to server
 	
-	 //basic elements
-	final int MAP_X = 10; int MAP_Y = 3;
-	private Tile<Player>[][] map; //map
+	 //basic elements - added most to server
+	final int MAP_X = 10; int MAP_Y = 3; //added to server
+	private Tile<Player>[][] map; //added to server
 	private Player currentPlayerTurn;	// current player's turn
 	
 	private LinkedList<Player> playerTurns = new LinkedList<Player>();
 	
 	private int numPlayers = 0;
-	private int dice1 = 1, dice2 = 1, totalDice = 2;
+	private int dice1 = 1, dice2 = 1, totalDice = 2; //added to server
 	
 	
 	public EAE(){
@@ -50,8 +50,9 @@ public class EAE<P> extends LinkedList<P> {
 	public int rollDice(){	
 		return rand.nextInt() % 5 +1 ; // dice implementation
 	}
-
-	public void genMapDefault(){ //regular map generation
+	
+	//added to server
+	public void genMapDefault(){ //regular map generation - added to server
 		map = new Tile[MAP_Y][MAP_X];
 		for(int x = 0; x < MAP_X; x++){
 			for(int y = 0; y < MAP_Y; y++){
@@ -65,10 +66,12 @@ public class EAE<P> extends LinkedList<P> {
 		
 	}
 	
+	//added to server
 	public void genMapRandom(){ //generates a random map
 		
 	}
 	
+	//added to server
 	public void movePlayer(Player player){ //used after the dice has been rolled
 		map[player.getYLocation()][player.getXLocation()].removePlayer(player); //remove player from tile
 		
