@@ -64,12 +64,30 @@ public class LauncherFrame extends JFrame {
 		JButton btnCancel = new JButton("Cancel");
 		panel.add(btnCancel);
 		
-		btnHost.addActionListener(new ActionListener() {
+		btnHost.addActionListener(new ActionListener() { //required to be opened twice
 			public void actionPerformed(ActionEvent e) {
 				EelsAndEscalatorsServer server = new EelsAndEscalatorsServer();
-				panel.remove(btnClient);
-				panel.remove(btnHost);
-				outputText.append("Server now started");
+				ClientFrame frame = new ClientFrame();
+				contentPane.removeAll();
+				//panel.remove(btnClient);
+				//panel.remove(btnHost);
+				panel.updateUI();
+				outputText.append("Server now started.");
+			}
+		});
+		
+		btnClient.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ClientFrame frame = new ClientFrame();
+				outputText.append("Client now started.");
+			}
+		});
+		
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				outputText.append("Closing launcher.");
+				System.exit(0);
 			}
 		});
 	}
