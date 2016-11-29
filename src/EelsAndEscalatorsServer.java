@@ -59,8 +59,14 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 				new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
 				
 				// DEBUGGING_NOTE: Players 2-4 have been disabled to facilitate testing purposes
+				outputText.append("\nPlayer 2 now connecting from " + player2.getInetAddress().getHostAddress());
+				new DataOutputStream(player2.getOutputStream()).writeInt(PLAYER2);
 				
+				outputText.append("\nPlayer 3 now connecting from " + player3.getInetAddress().getHostAddress());
+				new DataOutputStream(player3.getOutputStream()).writeInt(PLAYER3);
 				
+				outputText.append("\nPlayer 4 now connecting from " + player4.getInetAddress().getHostAddress());
+				new DataOutputStream(player4.getOutputStream()).writeInt(PLAYER4);
 				
 				// DEBUGGING NOTE: NEED TO ADD PLAYERS TO CONSTRUCTOR
 				//2-4 WHEN TESTING OF PLAYER1 IS FINISHED
