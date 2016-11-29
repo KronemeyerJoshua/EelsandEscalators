@@ -12,6 +12,12 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER3_WIN = 33;
 	int PLAYER4_WIN = 44;
 	
+	// Player Lose Identification
+	int PLAYER1_LOSE = 10;
+	int PLAYER2_LOSE = 20;
+	int PLAYER3_LOSE = 30;
+	int PLAYER4_LOSE = 40;
+	
 	// Actions Performed
 	int SEND_ROLL_REQUEST = 99;
 	
