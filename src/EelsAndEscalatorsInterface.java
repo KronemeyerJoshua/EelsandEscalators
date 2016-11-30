@@ -6,6 +6,13 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER3 = 3;
 	int PLAYER4 = 4;
 	
+	// Player Turns
+	int PLAYER1_TURN = 01;
+	int PLAYER2_TURN = 02;
+	int PLAYER3_TURN = 03;
+	int PLAYER4_TURN = 04;
+	int[] PLAYER_TURN_ORDER = {PLAYER1_TURN, PLAYER2_TURN, PLAYER3_TURN, PLAYER4_TURN};
+	
 	// Player Win Identification
 	int PLAYER1_WIN = 11;
 	int PLAYER2_WIN = 22;
@@ -20,6 +27,10 @@ public interface EelsAndEscalatorsInterface {
 	
 	// Actions Performed
 	int SEND_ROLL_REQUEST = 99;
+	int PLAYER_WAIT = 12;
+	int PLAYER_GO = 13;
+	int RECEIVE_ROLL = 14;
+	int END_PLAYER_TURN = -11;
 	
 	// Any string constants should be put below this line
 	String ROLLDICEMSG = "Please roll dice.";
