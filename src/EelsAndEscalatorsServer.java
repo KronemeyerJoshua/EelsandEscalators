@@ -171,11 +171,32 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 				switch (fromP1.readInt()) {
 					case SEND_ROLL_REQUEST: // RollDice()
 											// Update player info
-											break;
+                    break;
+                }
+                
+                
+            while (true) {
+                switch (fromP2.readInt()) {
+                    case SEND_ROLL_REQUEST:
+                    break;
 					
-				}
+                }
+                
+                
+            while (true) {
+                switch (fromP3.readInt()) {
+                    case SEND_ROLL_REQUEST:
+                    break;
+                            
+                    }
+            while (true) {
+                switch (fromP4.readInt()) {
+                    case SEND_ROLL_REQUEST:
+                        break;
+                            
+                    }
 					
-			}
+            }
 		}
 		catch (Exception e) {
 			System.out.println(e.toString());
