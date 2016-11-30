@@ -361,11 +361,30 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		}
 	}
+
 	
-	
-	private void receiveMove(int currentPlayer){
-		//TODO - implement so you receive the dice values and fix move player
-		//movePlayer(currentPlayer);
+	private void receiveMove(int currentPlayer,int  x,int y){
+        switch (currentPlayer){
+            case 1:
+                PLAYER1.setXLocation(x);
+                PLAYER1.setXLocation(y);
+                break
+            case 2:
+                PLAYER2.setXLocation(x);
+                PLAYER2.setXLocation(y);
+                break
+            case 3:
+                PLAYER3.setXLocation(x);
+                PLAYER3.setXLocation(y);
+                break
+            case 4:
+                PLAYER4.setXLocation(x);
+                PLAYER4.setXLocation(y);
+                break
+                
+        }
+        
+        
 	}
 	
 	public int rollDice(){	
