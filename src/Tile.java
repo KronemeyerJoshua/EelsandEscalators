@@ -3,7 +3,7 @@ import javax.swing.JPanel;
 
 public class Tile<P> extends JPanel {
 	
-	private LinkedList<P> currentPlayers; //players on tile
+	private Player[] currentPlayers; //players on tile
 	
 	private boolean eel1 = false; //varying types of tiles on the map
 	private boolean eel2 = false; 
@@ -20,7 +20,7 @@ public class Tile<P> extends JPanel {
 	
 	
 	public Tile(){
-		LinkedList<P> currentPlayers = new LinkedList<P>();
+		currentPlayers = new Player[4];
 	}
 	
 	public Tile(int posX, int posY){
@@ -29,16 +29,32 @@ public class Tile<P> extends JPanel {
 		positionY = posY;
 	}
 	
-	public void addPlayer(P player){
-		currentPlayers.add(player);
+	public void addPlayer (Player player){ 
+		int x;
+		try{
+			for(x = 0; currentPlayers[x] != null; x++){} //TODO - requires further testing
+			
+			currentPlayers[x] = player;
+		}
+		catch(Exception e){
+			System.out.println("Too many players!");
+		}
 	}
 	
-	public void removePlayer(P player){
-		currentPlayers.remove(player);
+	public void removePlayer(Player player){ 
+		int x;
+		try{
+			for(x = 0; !currentPlayers[x].equals(player); x++){}//TODO - requires further testing
+			
+			currentPlayers[x] = null;
+		}
+		catch(Exception e){
+			System.out.println("Too many players!");
+		}
 	}
 	
 	public void resetPlayers(){
-		currentPlayers = new LinkedList<P>();
+		currentPlayers = new Player[4];
 	}
 	
 	//mutators
@@ -83,43 +99,43 @@ public class Tile<P> extends JPanel {
 	}
 	
 	//accessors
-	public boolean getEel1(boolean input){
+	public boolean isEel1(){
 		return eel1;
 	}
 		
-	public boolean getEel2(boolean input){
+	public boolean isEel2(){
 		return eel2;
 	}
 		
-	public boolean getEel3(boolean input){
+	public boolean isEel3(){
 		return eel3;
 	}
 		
-	public boolean getEel4(boolean input){
+	public boolean isEel4(){
 		return eel4;
 	}
 		
-	public boolean getEscalator(boolean input){
+	public boolean isEscalator(){
 		return escalator;
 	}
 		
-	public boolean getWin(boolean input){
+	public boolean isWin(){
 		return win;
 	}
 	
-	public boolean getLose(boolean input){
+	public boolean isLose(){
 		return lose;
 	}
 		
-	public boolean getStart(boolean input){
+	public boolean isStart(){
 		return start;
 	}
 	
-	public int getPositionX(int posX){
+	public int getPositionX(){
 		return positionX;
 	}
 		
-	public int getPositionY(int posY){
+	public int getPositionY(){
 		return positionY;
 	}
 	
