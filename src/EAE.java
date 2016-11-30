@@ -59,10 +59,7 @@ public class EAE<P> extends LinkedList<P> {
 				map[y][x] = new Tile<Player>();
 			}
 		}
-		map[0][0].setStart(true);
-		map[0][1].setEel1(true);
-		map[0][9].setEel1(true);
-		map[0][5].setEel2(true);
+	
 		
 	}
 	
