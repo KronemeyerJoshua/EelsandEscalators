@@ -168,28 +168,28 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 			DataOutputStream toP4 = new DataOutputStream(player4.getOutputStream());
 			
 			while (true) {
+				// Player 1
 				switch (fromP1.readInt()) {
 					case SEND_ROLL_REQUEST: // RollDice()
 											// Update player info
                     break;
                 }
                 
-                
-            while (true) {
+				// Player 2
                 switch (fromP2.readInt()) {
                     case SEND_ROLL_REQUEST:
                     break;
 					
                 }
                 
-                
-            while (true) {
+                // Player 3
                 switch (fromP3.readInt()) {
                     case SEND_ROLL_REQUEST:
                     break;
                             
-                    }
-            while (true) {
+                }
+                
+                // Player 4
                 switch (fromP4.readInt()) {
                     case SEND_ROLL_REQUEST:
                         break;
