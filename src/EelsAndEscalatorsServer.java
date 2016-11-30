@@ -43,35 +43,31 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 		try {
 			// Harr harr, server socket is over 9000
 			ServerSocket socket = new ServerSocket(9001);
+			outputText.append(new Date() +
+			        ": Server started at socket 9001\n");
+			
+			outputText.append("\n" + new Date() + ": Waiting for players...\n");
+			
+			// Assign our players ID's
+			// Connect our players
+			Socket player1 = socket.accept();
+			outputText.append("\nPlayer 1 now connecting from " + player1.getInetAddress().getHostAddress());
+			new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
+			
+			Socket player2 = socket.accept();
+			outputText.append("\nPlayer 2 now connecting from " + player2.getInetAddress().getHostAddress());
+			new DataOutputStream(player2.getOutputStream()).writeInt(PLAYER2);
+			
+			Socket player3 = socket.accept();
+			outputText.append("\nPlayer 3 now connecting from " + player3.getInetAddress().getHostAddress());
+			new DataOutputStream(player3.getOutputStream()).writeInt(PLAYER3);
+			
+			Socket player4 = socket.accept();
+			outputText.append("\nPlayer 4 now connecting from " + player4.getInetAddress().getHostAddress());
+			new DataOutputStream(player4.getOutputStream()).writeInt(PLAYER4);
 
-			while (true) {
-				
-				// Connect our players
-				Socket player1 = socket.accept();
-				
-				// DEBUGGING_NOTE: Players 2-4 have been disabled to facilitate testing purposes
-				Socket player2 = socket.accept();
-				Socket player3 = socket.accept();
-				Socket player4 = socket.accept();
-				
-				// Assign our players ID's
-				outputText.append("\nPlayer 1 now connecting from " + player1.getInetAddress().getHostAddress());
-				new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
-				
-				// DEBUGGING_NOTE: Players 2-4 have been disabled to facilitate testing purposes
-				outputText.append("\nPlayer 2 now connecting from " + player2.getInetAddress().getHostAddress());
-				new DataOutputStream(player2.getOutputStream()).writeInt(PLAYER2);
-				
-				outputText.append("\nPlayer 3 now connecting from " + player3.getInetAddress().getHostAddress());
-				new DataOutputStream(player3.getOutputStream()).writeInt(PLAYER3);
-				
-				outputText.append("\nPlayer 4 now connecting from " + player4.getInetAddress().getHostAddress());
-				new DataOutputStream(player4.getOutputStream()).writeInt(PLAYER4);
-				
-				// DEBUGGING NOTE: NEED TO ADD PLAYERS TO CONSTRUCTOR
-				//2-4 WHEN TESTING OF PLAYER1 IS FINISHED
-				
-				GameSession session = new GameSession(player1);
+			while (true) { //TODO - check if done
+				GameSession session = new GameSession(player1, player2, player3, player4);
 				new Thread(session).start();
 			}
 		}
@@ -87,7 +83,7 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface {
 	
 	// Global Vars
-	int numOfPlayers, currentPlayerTurn, dice1, dice2, totalDice;
+	int numOfPlayers, currentPlayerTurn, dice1, dice2, totalDice, x, y;
 	int[] turnOrder;
 	int[] playerCharacterChoice;
 	private Random rand = new Random();
@@ -122,6 +118,7 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 		this.player1 = player1;
 		
 		genMapDefault(); //generate map
+		
 	}
 	
 	public GameSession(Socket player1, Socket player2) {
@@ -131,6 +128,7 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 		this.player2 = player2;
 		
 		genMapDefault(); //generate map
+		
 	}
 	
 	public GameSession(Socket player1, Socket player2, Socket player3) {
@@ -152,6 +150,7 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 		this.player4 = player4;
 		
 		genMapDefault(); //generate map
+		run();
 	}
 	
 	public void run() {
@@ -167,8 +166,16 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 			DataOutputStream toP3 = new DataOutputStream(player3.getOutputStream());
 			DataOutputStream toP4 = new DataOutputStream(player4.getOutputStream());
 			
+			toP1.writeInt(SEND_ROLL_REQUEST);
+			
 			while (true) { //TODO
-				switch (fromP1.readInt()) { //Choice: make clientframe only send request when ready, so it can 
+				toP1.writeInt(whosNext());
+				toP2.writeInt(whosNext());
+				toP3.writeInt(whosNext());
+				toP4.writeInt(whosNext());
+				int rollRequest = fromP1.readInt();
+				
+				switch (rollRequest) { //Choice: make clientframe only send request when ready, so it can 
 					case SEND_ROLL_REQUEST: 
 						dice1 = rollDice();
 						dice2 = rollDice();
@@ -183,7 +190,13 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 						//TODO - decide necessary info for default operation
 				}
 				
-				switch (fromP2.readInt()) { //Choice: make clientframe only send request when ready, so it can 
+				toP1.writeInt(whosNext());
+				toP2.writeInt(whosNext());
+				toP3.writeInt(whosNext());
+				toP4.writeInt(whosNext());
+				rollRequest = fromP2.readInt();
+				
+				switch (rollRequest) { //Choice: make clientframe only send request when ready, so it can 
 					case SEND_ROLL_REQUEST: 
 						dice1 = rollDice();
 						dice2 = rollDice();
@@ -197,7 +210,49 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 					default:
 						//TODO - decide necessary info for default operation
 				}
-					
+				
+				toP1.writeInt(whosNext());
+				toP2.writeInt(whosNext());
+				toP3.writeInt(whosNext());
+				toP4.writeInt(whosNext());
+				rollRequest = fromP3.readInt();
+				
+				switch (rollRequest) { //Choice: make clientframe only send request when ready, so it can 
+					case SEND_ROLL_REQUEST: 
+						dice1 = rollDice();
+						dice2 = rollDice();
+						totalDice = dice1 + dice2;
+						toP1.writeInt(totalDice);
+						toP2.writeInt(totalDice);
+						toP3.writeInt(totalDice);
+						toP4.writeInt(totalDice);
+						break;
+				
+					default:
+						//TODO - decide necessary info for default operation
+				}
+				
+				toP1.writeInt(whosNext());
+				toP2.writeInt(whosNext());
+				toP3.writeInt(whosNext());
+				toP4.writeInt(whosNext());
+				rollRequest = fromP4.readInt();
+				
+				switch (rollRequest) { //Choice: make clientframe only send request when ready, so it can 
+					case SEND_ROLL_REQUEST: 
+						dice1 = rollDice();
+						dice2 = rollDice();
+						totalDice = dice1 + dice2;
+						toP1.writeInt(totalDice);
+						toP2.writeInt(totalDice);
+						toP3.writeInt(totalDice);
+						toP4.writeInt(totalDice);
+						
+						break;
+			
+					default:
+						//TODO - decide necessary info for default operation
+				}	
 			}
 		}
 		catch (Exception e) {
@@ -207,7 +262,11 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 	
 	
 	}
-
+	
+	private void sendMove(DataOutputStream out, int x, int y) throws IOException{
+		out.writeInt(x);
+		out.writeInt(y);
+	}
 	
 	// Add a player to the game
 	public void addPlayer() {
@@ -250,10 +309,10 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 				map[y][x] = new Tile<Player>(x, y);
 			}
 		}
-		map[0][0].setStart(true);
-		map[0][1].setEel1(true);
-		map[0][9].setEel1(true);
-		map[0][5].setEel2(true);
+		map[0][0].setStart();
+		map[0][1].setEel1();
+		map[0][9].setEel1();
+		map[0][5].setEel2();
 		
 	}
 	
@@ -261,7 +320,7 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 		
 	}
 	
-	public void movePlayer(Player player){ //used after the dice has been rolled
+	public void movePlayer(Player player, int currentXPosition, int currentYPosition){ //used after the dice has been rolled
 		map[player.getYLocation()][player.getXLocation()].removePlayer(player); //remove player from tile
 		int moveAmount;
 		
@@ -281,8 +340,24 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 				totalDice--;
 			}
 		}
-		if(map[player.getYLocation()][player.getXLocation()].isEel1())
-		map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
+		
+		//transfer to other tiles if 
+		switch(map[player.getYLocation()][player.getXLocation()].getTrait()){ //TODO - add player transfer to end of escalator/eel 
+			case 1: //eel1 = 1;
+				break;
+			case 2: //eel2 = 2;
+				break;
+			case 3: //eel3 = 3;
+				break;
+			case 4: //eel4 = 4;
+				break;
+			case 5: //escalator1H = 5;
+				break;
+			case 6: //escalator2H = 6; 
+				break;
+			case 7: //escalator3H = 7
+				map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
+				break;
+		}
 	}
-	
 }
