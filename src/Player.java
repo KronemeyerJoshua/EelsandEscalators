@@ -13,20 +13,28 @@ public class Player extends JPanel {
 	
 	// Declare Vars
 	int[] playerLocation = new int[2]; //[0] is x and [1] is y
-	int playerCharacter, playerToken; 
-	String playerName;
+	int playerCharacter; 
+	String playerName, playerToken;
 	String[] listNames = {"SpongeBob", "Patrick", "Squidward", "Mr. Krabs"};
+	Boolean myTurn;
 	Random rand = new Random();
 	
 	// Default Constructor
-	public Player() {
+	public Player() { //TODO - proper constructor
 		playerName = listNames[playerCharacter];
 		playerLocation[0] = 0;
 		playerLocation[1] = 0;
 	}
 	
+	public Player(int character, String token) {
+		playerLocation[0] = 0;
+		playerLocation[1] = 0;
+		playerCharacter = character;
+		playerToken = token;
+	}
+	
 	// Constructor
-	public Player(int character, int token, String name) {
+	public Player(int character, String token, String name) {
 		playerLocation[0] = 0;
 		playerLocation[1] = 0;
 		playerCharacter = character;
@@ -36,8 +44,6 @@ public class Player extends JPanel {
 	
 	
 	// Mutators
-
-	
 	//@param1 Player Location
 	public void setLocation(int locX, int locY) {
 		playerLocation[0] = locX;
@@ -58,13 +64,17 @@ public class Player extends JPanel {
 	}
 	
 	//@param1 Unique player token
-	public void setToken(int token) {
+	public void setToken(String token) {
 		playerToken = token;
 	}
 	
 	//@param1 Name set by player
 	public void setName(String name) {
 		playerName = name;
+	}
+	
+	public void setMyTurn(Boolean val){
+		myTurn = val;
 	}
 	
 	
@@ -86,13 +96,17 @@ public class Player extends JPanel {
 	}
 	
 	//@return Unique player token
-	public int getToken() {
+	public String getToken() {
 		return playerToken;
 	}
 	
 	//@return Name set by player
 	public String getName() {
 		return playerName;
+	}
+	
+	public Boolean isMyTurn(){
+		return myTurn;
 	}
 	
 }
