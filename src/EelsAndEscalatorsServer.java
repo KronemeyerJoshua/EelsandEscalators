@@ -167,36 +167,38 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 			DataOutputStream toP3 = new DataOutputStream(player3.getOutputStream());
 			DataOutputStream toP4 = new DataOutputStream(player4.getOutputStream());
 			
-			while (true) {
-				// Player 1
-				switch (fromP1.readInt()) {
-					case SEND_ROLL_REQUEST: // RollDice()
-											// Update player info
-                    break;
-                }
-                
-				// Player 2
-                switch (fromP2.readInt()) {
-                    case SEND_ROLL_REQUEST:
-                    break;
+			while (true) { //TODO
+				switch (fromP1.readInt()) { //Choice: make clientframe only send request when ready, so it can 
+					case SEND_ROLL_REQUEST: 
+						dice1 = rollDice();
+						dice2 = rollDice();
+						totalDice = dice1 + dice2;
+						toP1.writeInt(totalDice);
+						toP2.writeInt(totalDice);
+						toP3.writeInt(totalDice);
+						toP4.writeInt(totalDice);
+						break;
+						
+					default:
+						//TODO - decide necessary info for default operation
+				}
+				
+				switch (fromP2.readInt()) { //Choice: make clientframe only send request when ready, so it can 
+					case SEND_ROLL_REQUEST: 
+						dice1 = rollDice();
+						dice2 = rollDice();
+						totalDice = dice1 + dice2;
+						toP1.writeInt(totalDice);
+						toP2.writeInt(totalDice);
+						toP3.writeInt(totalDice);
+						toP4.writeInt(totalDice);
+						break;
 					
-                }
-                
-                // Player 3
-                switch (fromP3.readInt()) {
-                    case SEND_ROLL_REQUEST:
-                    break;
-                            
-                }
-                
-                // Player 4
-                switch (fromP4.readInt()) {
-                    case SEND_ROLL_REQUEST:
-                        break;
-                            
-                    }
+					default:
+						//TODO - decide necessary info for default operation
+				}
 					
-            }
+			}
 		}
 		catch (Exception e) {
 			System.out.println(e.toString());
@@ -279,6 +281,7 @@ class GameSession extends JPanel implements Runnable, EelsAndEscalatorsInterface
 				totalDice--;
 			}
 		}
+		if(map[player.getYLocation()][player.getXLocation()].isEel1())
 		map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
 	}
 	
