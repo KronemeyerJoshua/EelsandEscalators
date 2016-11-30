@@ -162,7 +162,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						"\nEnter <2> for Squidward" +
 						"\nEnter <3> for SpongeBob" +
 						"\nEnter <4> for Patrick\n");
-				input = outputText.getText(); //has not been tested
+				input = outputText.getText(outputText.getLineCount(), 0); //has not been tested
 				
 				outputText.append("\nPlayer 1");
 				
@@ -251,18 +251,14 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		}
 	}
 
-	private void sendMove() throws IOException { //TODO
-		dice1 = rollDice();
-		dice2 = rollDice();
-		totalDice = dice1 + dice2;
-		outputStream.writeInt(totalDice);
+	private void sendMove() throws IOException { //TODO - check
+		outputStream.writeInt(SEND_ROLL_REQUEST);
 	}
 	
-	private void waitForPlayerAction()throws InterruptedException{ //TODO
+	private void waitForPlayerAction()throws InterruptedException{ //TODO - check
 		while(wait){
 				Thread.sleep(100);
-		}
-		
+		}	
 		wait = true;
 	}
 	
