@@ -25,15 +25,15 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	private DataInputStream inputStream; //fromServer
 	private DataOutputStream outputStream; //toServer
 	private Image img;
+	
 	private boolean connected;
 	private String myToken;
+	private Player myPlayer, player1, player2, player3, player4;
 	private boolean continueToPlay = true;
 	private JLabel statusIndicator = new JLabel();
-	private int dice1, dice2, totalDice, player;
-	private Random rand = new Random();
+	private int player;
 	int numOfPlayers, currentPlayerTurn;
-	private final int MAP_X = 10; int MAP_Y = 3;
-	private Tile<Player>[][] map; //map
+	
 
 	/**
 	 * Launch the application.
@@ -133,6 +133,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			// Client in and out streams to and from the server
 			inputStream = new DataInputStream(socket.getInputStream());
 			outputStream = new DataOutputStream(socket.getOutputStream());
+			
 		}
 		catch (Exception e) {
 			connected = false;
@@ -143,31 +144,29 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		Thread thread = new Thread(this);
 	    thread.start();
 		connected = true;
-		
 	    getServerInfo();
 		return true;
 	}
 
-	//TODO
+	//TODO -need to fix
 	public void run() {
 
 		try{
-			genMapDefault();
 			player = inputStream.readInt();
-			String input;
-			
+			//outputText.append("Player: " + player);
+			//String input;
+			/*
 			if(player == PLAYER1){
 				outputText.append("\n" + CHARSELECTMESSAGE +
 						"\nEnter <1> for Mr. Krabs" +
 						"\nEnter <2> for Squidward" +
 						"\nEnter <3> for SpongeBob" +
 						"\nEnter <4> for Patrick\n");
-				input = outputText.getText(outputText.getLineCount(), 0); //has not been tested
+				//input = outputText.getText(outputText.getLineCount(), 1); //has not been tested
 				
-				outputText.append("\nPlayer 1");
-				
-				//TODO - add status indicator and info on connections
-				//TODO - add player start indication
+				outputText.append("\nPlayer 1 connected: " + connected +
+						"\n" + ROLLDICEMSG + "/n");
+
 			}
 			
 			else if(player == PLAYER2){
@@ -176,9 +175,10 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						"\nEnter <2> for Squidward" +
 						"\nEnter <3> for SpongeBob" +
 						"\nEnter <4> for Patrick\n");
-				input = outputText.getText(); //has not been tested
+				//input = outputText.getText(); //has not been tested
 				
-				outputText.append("\nPlayer 2");
+				outputText.append("\nPlayer 2 connected: " + connected +
+						"\n" + WAIT_MESSAGE + "\n");
 			}
 			
 			else if(player == PLAYER3){
@@ -187,9 +187,11 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						"\nEnter <2> for Squidward" +
 						"\nEnter <3> for SpongeBob" +
 						"\nEnter <4> for Patrick\n");
-				input = outputText.getText(); //has not been tested
+				//input = outputText.getText(); //has not been tested
 				
-				outputText.append("\nPlayer 3");
+				outputText.append("\nPlayer 3 connected: " + connected +
+						"\n" + WAIT_MESSAGE + "\n" );
+				
 			}
 			
 			else{
@@ -198,27 +200,36 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						"\nEnter <2> for Squidward" +
 						"\nEnter <3> for SpongeBob" +
 						"\nEnter <4> for Patrick\n");
-				input = outputText.getText(); //has not been tested
+				//input = player; //has not been tested
 				
-				outputText.append("\nPlayer 4");
+				outputText.append("\nPlayer 4 connected: " + connected +
+						"\n" + WAIT_MESSAGE + "\n" );
 			}
+			*/
+			switch(player){
+				case 1:
+					myToken =  MRKRABS_TOKEN;
+					myPlayer = new Player(player, MRKRABS_TOKEN);
+					player1 = new Player(player, MRKRABS_TOKEN);
+					break;
 			
-			switch(input){
-			case "1":
-				myToken =  MRKRABS_TOKEN;
-				break;
-			
-			case "2":
-				myToken = SQUIDWARD_TOKEN;
-				break;
-			
-			case "3":
-				myToken = SPONGEBOB_TOKEN;
-				break;
+				case 2:
+					myToken = SQUIDWARD_TOKEN;
+					myPlayer = new Player(player, SQUIDWARD_TOKEN);
+					player2 = new Player(player, SQUIDWARD_TOKEN);
+					break;
 				
-			case "4":
-				myToken = PATRICK_TOKEN;
-				break;
+				case 3:
+					myToken = SPONGEBOB_TOKEN;
+					myPlayer = new Player(player, SPONGEBOB_TOKEN);
+					player3 = new Player(player, SPONGEBOB_TOKEN);
+					break;
+				
+				case 4:
+					myToken = PATRICK_TOKEN;
+					myPlayer = new Player(player, PATRICK_TOKEN);
+					player4 = new Player(player, PATRICK_TOKEN);
+					break;
 			}
 			
 			while(continueToPlay){
@@ -247,7 +258,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		}
 		catch(Exception ex){
-			
+			outputText.append("Error with run()");
 		}
 	}
 
@@ -262,173 +273,102 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		wait = true;
 	}
 	
-	private void receiveInfoFromServer() throws IOException {
+	private void receiveInfoFromServer() throws IOException { //TODO - check
 		int currentStatus = inputStream.readInt();
-		
-		if(currentStatus == PLAYER1_WIN){
-			continueToPlay = false;
-			outputText.append("\nPlayer 1 wins!");
-			if(player != PLAYER1){  //if not me
-				receiveMove(PLAYER1);
-			}
-		}
-		
-		else if(currentStatus == PLAYER2_WIN){
-			continueToPlay = false;
-			outputText.append("\nPlayer 2 wins!");
-			if(player != PLAYER2){  //if not me
-				receiveMove(PLAYER2);
-			}
-		}
-		
-		else if(currentStatus == PLAYER3_WIN){
-			continueToPlay = false;
-			outputText.append("\nPlayer 3 wins!");
-			if(player != PLAYER3){  //if not me
-				receiveMove(PLAYER3);
-			}
-		}
-		
-		else if(currentStatus == PLAYER4_WIN){
-			continueToPlay = false;
-			outputText.append("\nPlayer 4 wins!");
-			if(player != PLAYER4){  //if not me
-				receiveMove(PLAYER4);
-			}
-		}
-		else if(currentStatus == PLAYER1_LOSE){ //TODO - properly implement losing characteristics
-			continueToPlay = false;
-			outputText.append("\nPlayer 1 loses!");
-			if(player != PLAYER1){  //if not me
-				receiveMove(PLAYER1);
-			}
-		}
-		
-		else if(currentStatus == PLAYER2_LOSE){
-			continueToPlay = false;
-			outputText.append("\nPlayer 2 loses!");
-			if(player != PLAYER2){  //if not me
-				receiveMove(PLAYER2);
-			}
-		}
-		
-		else if(currentStatus == PLAYER3_LOSE){
-			continueToPlay = false;
-			outputText.append("\nPlayer 3 loses!");
-			if(player != PLAYER3){  //if not me
-				receiveMove(PLAYER3);
-			}
-		}
-		
-		else if(currentStatus == PLAYER4_LOSE){
-			continueToPlay = true;
-			outputText.append("\nPlayer 4 loses!");
-			if(player != PLAYER4){  //if not me
-				receiveMove(PLAYER4);
-			}
-		}
-		
-		else if(currentStatus == PLAYER1){ //player1's turn
-			receiveMove(PLAYER1);
-			if(player == PLAYER1){  //if me
-				outputText.append("\nYour turn!" + ROLLDICEMSG);
-				myTurn = true;
-			}
-		}
-		
-	
-		else if(currentStatus == PLAYER2){ //player2's turn
-			receiveMove(PLAYER2);
-			if(player == PLAYER2){  //if me
-				outputText.append("\nYour turn!" + ROLLDICEMSG);
-				myTurn = true;
-			}
-		}
-		
-		else if(currentStatus == PLAYER3){ //player3's turn
-			receiveMove(PLAYER3);
-			if(player == PLAYER3){ //if me
-				outputText.append("\nYour turn!" + ROLLDICEMSG);
-				myTurn = true;
-			}
-		}
-		
-		else if(currentStatus == PLAYER4){ //player4's turn
-			receiveMove(PLAYER4);
-			if(player == PLAYER4){  //if me
-				outputText.append("\nYour turn!" + ROLLDICEMSG);
-				myTurn = true;
-			}
+		int x = inputStream.readInt();
+		int y = inputStream.readInt();
+
+		switch(currentStatus){
+			case PLAYER1_WIN:
+				continueToPlay = false;
+				outputText.append("\nPlayer 1 wins!");
+				if(player != PLAYER1)  //if not me
+					receiveMove(PLAYER1, x, y);
+				break;
+				
+			case PLAYER2_WIN:
+				continueToPlay = false;
+				outputText.append("\nPlayer 2 wins!");
+				if(player != PLAYER2)  //if not me
+					receiveMove(PLAYER2, x, y);
+				break;
+				
+			case PLAYER3_WIN:
+				continueToPlay = false;
+				outputText.append("\nPlayer 3 wins!");
+				if(player != PLAYER3)  //if not me
+					receiveMove(PLAYER3, x, y);
+				break;
+				
+			case PLAYER4_WIN:
+				continueToPlay = false;
+				outputText.append("\nPlayer 4 wins!");
+				if(player != PLAYER4)  //if not me
+					receiveMove(PLAYER4, x, y);
+				break;
+				
+			case PLAYER1_LOSE: //TODO - add more losing characteristics
+				outputText.append("\nPlayer 1 loses!");
+				if(player != PLAYER1)  //if not me
+					receiveMove(PLAYER1, x, y);
+				break;
+				
+			case PLAYER2_LOSE:
+				outputText.append("\nPlayer 2 loses!");
+				if(player != PLAYER2)  //if not me
+					receiveMove(PLAYER2, x, y);
+				break;
+				
+			case PLAYER3_LOSE:
+				outputText.append("\nPlayer 3 loses!");
+				if(player != PLAYER3)  //if not me
+					receiveMove(PLAYER3, x, y);
+				break;
+				
+			case PLAYER4_LOSE:
+				outputText.append("\nPlayer 4 loses!");
+				if(player != PLAYER4) //if not me
+					receiveMove(PLAYER4, x, y);
+				break;
+				
+			case PLAYER1:
+				receiveMove(PLAYER1, x, y);
+				break;
+				
+			case PLAYER2:
+				receiveMove(PLAYER2, x, y);
+				break;
+				
+			case PLAYER3:
+				receiveMove(PLAYER3, x, y);
+				break;
+				
+			case PLAYER4:
+				receiveMove(PLAYER4, x, y);
+				break;		
 		}
 	}
 
 	
-	private void receiveMove(int currentPlayer,int  x,int y){
+	private void receiveMove(int currentPlayer, int x ,int y){
         switch (currentPlayer){
             case 1:
-                PLAYER1.setXLocation(x);
-                PLAYER1.setXLocation(y);
-                break
+                player1.setXLocation(x);
+                player1.setYLocation(y);
+                break;
             case 2:
-                PLAYER2.setXLocation(x);
-                PLAYER2.setXLocation(y);
-                break
+                player2.setXLocation(x);
+                player2.setYLocation(y);
+                break;
             case 3:
-                PLAYER3.setXLocation(x);
-                PLAYER3.setXLocation(y);
-                break
+                player3.setXLocation(x);
+                player3.setYLocation(y);
+                break;
             case 4:
-                PLAYER4.setXLocation(x);
-                PLAYER4.setXLocation(y);
-                break
+                player4.setXLocation(x);
+                player4.setYLocation(y);
+                break;
                 
-        }
-        
-        
-	}
-	
-	public int rollDice(){	
-		return rand.nextInt() % 5 +1 ; // dice implementation
-	}
-	
-	public void movePlayer(Player player){ //used after the dice has been rolled //TODO - redesign for player system
-		map[player.getYLocation()][player.getXLocation()].removePlayer(player); //remove player from tile
-		int moveAmount;
-		
-		while(totalDice > 0){
-			if(player.getXLocation()+totalDice > MAP_X-1 || (player.getXLocation()-totalDice < 0 && player.getYLocation() == 1)){
-				moveAmount = (MAP_X-1) - player.getXLocation(); //space between the end of the map and current Tile
-				totalDice = totalDice - moveAmount - 1; //
-				player.setXLocation(MAP_X-1);
-				player.setYLocation(player.getYLocation()+1);
-			}
-			else if(player.getYLocation() == 1){ //moves player to the left if in the middle section
-				player.setXLocation(player.getXLocation()-1);
-				totalDice--;
-			}
-			else{
-				player.setXLocation(player.getXLocation()+1);
-				totalDice--;
-			}
-		}
-		map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
-	}
-	
-	public void genMapDefault(){ //regular map generation - added to server TODO
-		map = new Tile[MAP_Y][MAP_X];
-		for(int x = 0; x < MAP_X; x++){
-			for(int y = 0; y < MAP_Y; y++){
-				map[y][x] = new Tile<Player>(x, y);
-			}
-		}
-		map[0][0].setStart(true);
-		map[0][1].setEel1(true);
-		map[0][9].setEel1(true);
-		map[0][5].setEel2(true);
-		
-	}
-	
-	public void genMapRandom(){ //generates a random map - TODO
-		
+        } 
 	}
 }
