@@ -118,7 +118,7 @@ public class Tile<P> extends JPanel {
 	}
 	
 	public void setStart(){
-		trait = 0;
+		trait = 10;
 	}
 	
 	public void setPositionX(int posX){
