@@ -18,9 +18,9 @@ public class Tile<P> extends JPanel {
 	//escalator3T = 17;
 	//win = 8;
 	//lose = 9;
-	//start = 0; 
+	//start = 10; 
 	
-	private int trait; //indicates type of tile
+	private int trait = 0; //indicates type of tile
 	private int positionX = 0; //tile position
 	private int positionY = 0;	
 	
@@ -85,16 +85,28 @@ public class Tile<P> extends JPanel {
 		trait = 4;
 	}
 	
-	public void setEscalator1(){
+	public void setEscalator1H(){
 		trait = 5;
 	}
 	
-	public void setEscalator2(){
+	public void setEscalator2H(){
 		trait = 6;
 	}
 	
-	public void setEscalator3(){
+	public void setEscalator3H(){
 		trait = 7;
+	}
+	
+	public void setEscalator1T(){
+		trait = 15;
+	}
+	
+	public void setEscalator2T(){
+		trait = 16;
+	}
+	
+	public void setEscalator3T(){
+		trait = 17;
 	}
 	
 	public void setWin(){
@@ -134,16 +146,28 @@ public class Tile<P> extends JPanel {
 		return trait == 4;
 	}
 		
-	public boolean isEscalator1(){
+	public boolean isEscalator1H(){
 		return trait == 5;
 	}
 	
-	public boolean isEscalator2(){
+	public boolean isEscalator2H(){
 		return trait == 6;
 	}
 	
-	public boolean isEscalator3(){
+	public boolean isEscalator3H(){
 		return trait == 7;
+	}
+	
+	public boolean isEscalator1T(){
+		return trait == 15;
+	}
+	
+	public boolean isEscalator2T(){
+		return trait == 16;
+	}
+	
+	public boolean isEscalator3T(){
+		return trait == 17;
 	}
 		
 	public boolean isWin(){
