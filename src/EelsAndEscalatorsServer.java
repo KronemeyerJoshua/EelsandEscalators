@@ -36,7 +36,8 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 		setBounds(860, 440, 450, 300);
 		setResizable(false);
 		setContentPane(contentPane);
-		setVisible(true);
+		
+		
 		
 		// SOUTHERN PANEL FOR GUI OBJECTS
 		panel = new JPanel();
@@ -52,6 +53,7 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
         scrollPane = new JScrollPane(outputText);
         contentPane.add(scrollPane, BorderLayout.CENTER);
         
+        setVisible(true);
         // TERMINATE BUTTON ACTION LISTENER
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
