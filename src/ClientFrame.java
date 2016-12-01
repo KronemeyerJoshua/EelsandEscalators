@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -59,22 +60,33 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	 * Create the frame.
 	 */
 	public ClientFrame() {
+		// TESTING PLAYER SPRITE IMAGE RESCALING
+		ImageIcon plSprite = new ImageIcon("src/123.png"); 
+		Image image = plSprite.getImage(); 
+		Image newimg = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+		plSprite = new ImageIcon(newimg);
+		JLabel playerSprite = new JLabel(plSprite);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1844, 1080);
 		setResizable(false);
 		contentPane = new JLabel(new ImageIcon("src/EelsAndEscalatorsYouLose.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout());
+		contentPane.setLayout(null);
 		setContentPane(contentPane);
-		setVisible(true);
+		
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(18, 148, 203));
-		contentPane.add(panel, BorderLayout.SOUTH);
+		contentPane.add(panel);
+		panel.setSize(50,80);
+		panel.setLocation(50,900);
 		
-		JTextArea outputText = new JTextArea(30, 30);
+		JTextArea outputText = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(outputText);
-        contentPane.add(scrollPane, BorderLayout.EAST);
+        contentPane.add(scrollPane);
+        scrollPane.setSize(200,800);
+        scrollPane.setLocation(1600,100);
 		
         statusIndicator.setBorder(new LineBorder(Color.black, 1)); //TODO - implement
         add(statusIndicator, BorderLayout.NORTH);
@@ -88,7 +100,12 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		JLabel lblDi_1 = new JLabel("Dice 2");
 		panel.add(lblDi_1);
 		
+		// ADD PLAYER SPRITE
+		contentPane.add(playerSprite);
+		playerSprite.setLocation(400, 700);
+		playerSprite.setSize(40,40);
 		
+		setVisible(true);
 		//TODO - Add JTextArea hider/opener
 		//outputText.addComponentListener(new addKeyListener(T) {	
 		//});
@@ -111,6 +128,39 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 					outputText.append(err.toString());
 				}
 			}
+		});
+		
+		contentPane.addMouseListener(new MouseListener() {
+			public void mouseClicked(MouseEvent e) {
+				int x = e.getX();
+				int y = e.getY();
+				outputText.append("X: " + x + ", Y: " + y + "\n");
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
 		});
 	}
 	
