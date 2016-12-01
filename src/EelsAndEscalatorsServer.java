@@ -301,38 +301,61 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		return dice; // dice implementation
 	}
 	
-	public void genMapDefault(){ //regular map generation - added to server TODO
+	public void genMapDefault(){ //regular map generation 
 		map = new Tile[MAP_Y][MAP_X];
 		for(int x = 0; x < MAP_X; x++){
 			for(int y = 0; y < MAP_Y; y++){
 				map[y][x] = new Tile<Player>(x, y);
 			}
 		}
+		// Set Start & Finish
 		map[0][0].setStart();
+		map[2][9].setWin();
+		map[1][3].setLose();
+		
+		// Set Eels
 		map[0][1].setEel1();
 		map[0][9].setEel1();
 		map[0][5].setEel2();
+		map[2][7].setEel2();
+		map[1][0].setEel3();
+		map[2][2].setEel3();
+		
+		// Set Escalators
+		map[0][3].setEscalator1H();
+		map[2][4].setEscalator1T();
+		map[0][7].setEscalator2H();
+		map[1][7].setEscalator2T();
+		map[1][1].setEscalator3H();
+		map[2][0].setEscalator3T();
 		
 	}
 	
 	public void genMapRandom(){ //generates a random map - TODO
 		
 	}
-	
-	public void movePlayer(Player player, int currentXPosition, int currentYPosition){ //used after the dice has been rolled
-		map[player.getYLocation()][player.getXLocation()].removePlayer(player); //remove player from tile
+	//TODO - implement into server function
+	public void movePlayer(Player player){ //used after the dice has been rolled
 		int moveAmount;
 		int totalDice = dice[0] + dice[1];
+		x = player.getXLocation();
+		y = player.getYLocation();
+		
+		map[y][x].removePlayer(player); //remove player from tile
 		
 		while(totalDice > 0){
-			if(player.getXLocation()+totalDice > MAP_X-1 || (player.getXLocation()-totalDice < 0 && player.getYLocation() == 1)){
-				moveAmount = (MAP_X-1) - player.getXLocation(); //space between the end of the map and current Tile
-				totalDice = totalDice - moveAmount - 1; //
-				player.setXLocation(MAP_X-1);
-				player.setYLocation(player.getYLocation()+1);
+			if(x + totalDice > MAP_X-1 || (x - totalDice < 0 && y == 1)){
+				
+				moveAmount = (MAP_X-1) - x; //space between the end of the map and current Tile
+				totalDice = totalDice - moveAmount - 1; //set amount left
+				
+				x = MAP_X - 1;
+				y++;
+				
 			}
 			else if(player.getYLocation() == 1){ //moves player to the left if in the middle section
-				player.setXLocation(player.getXLocation()-1);
+				
+				x--;
 				totalDice--;
 			}
 			else{
@@ -341,23 +364,49 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 			}
 		}
 		
-		//transfer to other tiles if 
-		switch(map[player.getYLocation()][player.getXLocation()].getTrait()){ //TODO - add player transfer to end of escalator/eel 
-			case 1: //eel1 = 1;
-				break;
-			case 2: //eel2 = 2;
-				break;
-			case 3: //eel3 = 3;
-				break;
-			case 4: //eel4 = 4;
-				break;
-			case 5: //escalator1H = 5;
-				break;
-			case 6: //escalator2H = 6; 
-				break;
-			case 7: //escalator3H = 7
-				map[player.getYLocation()][player.getXLocation()].addPlayer(player); //add player to tile
-				break;
+		// Transfer to other tiles if Eel or Escalator
+		int trait = map[y][x].getTrait();
+		
+		if(trait > 0 && trait < 5){ // Eels
+			for(int b = 0; b < MAP_Y; b++)
+				for(int a = 0; a < MAP_X; a++)
+					if(map[b][a].getTrait() == trait && a != x && b != y){
+						x = a;
+						y = b;
+					}
 		}
+		
+		else if(trait == 5){ // Escalator 1
+			for(int b = 0; b < MAP_Y; b++)
+				for(int a = 0; a < MAP_X; a++)
+					if(map[b][a].getTrait() == 15){
+						x = a;
+						y = b;
+					}
+		}
+			
+		else if(trait == 6){ // Escalator 2
+			for(int b = 0; b < MAP_Y; b++)
+				for(int a = 0; a < MAP_X; a++)
+					if(map[b][a].getTrait() == 16){
+						x = a;
+						y = b;
+					}
+		}
+			
+		else if(trait == 7){ // Escalator 3
+			for(int b = 0; b < MAP_Y; b++)
+				for(int a = 0; a < MAP_X; a++)
+					if(map[b][a].getTrait() == 17){
+						x = a;
+						y = b;
+					}
+		}
+		
+		// Set x and y of player
+		player.setXLocation(x);
+		player.setYLocation(y);
+		map[y][x].addPlayer(player);
+		
 	}
 }
