@@ -1,9 +1,9 @@
-import java.util.LinkedList;
 import javax.swing.JPanel;
 
-public class Tile<P> extends JPanel {
+public class Tile extends JPanel {
 	
-	private Player[] currentPlayers; //players on tile
+	//private Player[] currentPlayers; //players on tile
+	private int[] players;
 	
 	//Traits of tiles for the map
 	//eel1 = 1; 
@@ -27,7 +27,7 @@ public class Tile<P> extends JPanel {
 	
 	
 	public Tile(){
-		currentPlayers = new Player[4];
+		players = new int[4];
 	}
 	
 	public Tile(int posX, int posY){
@@ -36,32 +36,16 @@ public class Tile<P> extends JPanel {
 		positionY = posY;
 	}
 	
-	public void addPlayer (Player player){ 
-		int x;
-		try{
-			for(x = 0; currentPlayers[x] != null; x++){} //TODO - requires further testing
-			
-			currentPlayers[x] = player;
-		}
-		catch(Exception e){
-			System.out.println("Too many players!");
-		}
+	public void addPlayer (int player){ 
+		players[player] = player;
 	}
 	
-	public void removePlayer(Player player){ 
-		int x;
-		try{
-			for(x = 0; !currentPlayers[x].equals(player); x++){}//TODO - requires further testing
-			
-			currentPlayers[x] = null;
-		}
-		catch(Exception e){
-			System.out.println("Too many players!");
-		}
+	public void removePlayer(int player){ 
+		players[player] = 4;
 	}
 	
 	public void resetPlayers(){
-		currentPlayers = new Player[4];
+		players = new int[4];
 	}
 	
 	//mutators
@@ -197,6 +181,22 @@ public class Tile<P> extends JPanel {
 	
 	public int getTrait(){
 		return trait;
+	}
+	/*
+	public Player getPlayerArray(int index){
+		return currentPlayers[index];
+	}
+	
+	public Player[] getPlayerArray(){
+		return currentPlayers;
+	}
+	*/
+	public int getArray(int index){
+		return players[index];
+	}
+	
+	public int[] getArray(){
+		return players;
 	}
 	
 }
