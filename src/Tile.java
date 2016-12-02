@@ -129,6 +129,11 @@ public class Tile<P> extends JPanel {
 		positionY = posY;
 	}
 	
+	public void setPosition(int posX, int posY){
+		positionX = posX;
+		positionY = posY;
+	}
+	
 	//accessors
 	public boolean isEel1(){
 		return trait == 1;

@@ -331,11 +331,49 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		map[1][1].setEscalator3H();
 		map[2][0].setEscalator3T();
 		
+		// Set Positions
+		// y = 0
+		map[0][0].setPosition(424,775);
+		map[0][1].setPosition(1434,775); // eel 1
+		map[0][2].setPosition(658,775);
+		map[0][3].setPosition(835,268); //escalator 1 H
+		map[0][4].setPosition(872,775);
+		map[0][5].setPosition(1162,268); //eel 2
+		map[0][6].setPosition(1096,775);
+		map[0][7].setPosition(1184,507); // escalator 2 H
+		map[0][8].setPosition(1308,775);
+		map[0][9].setPosition(547,775); // eel 1
+		
+		// y = 1
+		map[1][0].setPosition(618,268); //eel 3
+		map[1][1].setPosition(392,268); //escalator 3 H
+		map[1][2].setPosition(628,507);
+		map[1][3].setPosition(183,757); // You Lose
+		map[1][4].setPosition(858,507);
+		map[1][5].setPosition(966,507);
+		map[1][6].setPosition(1081,507);
+		map[1][7].setPosition(1184,507); // escalator 2 T
+		map[1][8].setPosition(1293,507);
+		map[1][9].setPosition(1424,507);
+		
+		// y = 2
+		map[2][0].setPosition(392,268); //escalator 3 T
+		map[2][1].setPosition(516,268);
+		map[2][2].setPosition(392,507); //eel 3 
+		map[2][3].setPosition(725,268);
+		map[2][4].setPosition(835,268); //escalator 1 T
+		map[2][5].setPosition(948,268);
+		map[2][6].setPosition(1055,268);
+		map[2][7].setPosition(985,775); //eel 2
+		map[2][8].setPosition(1271,268);
+		map[2][9].setPosition(1388,268);
+		
 	}
 	
 	public void genMapRandom(){ //generates a random map - TODO
 		
 	}
+	
 	//TODO - implement into server function
 	public void movePlayer(Player player){ //used after the dice has been rolled
 		int moveAmount;
@@ -355,59 +393,22 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 				y++;
 				
 			}
-			else if(player.getYLocation() == 1){ //moves player to the left if in the middle section
-				
+			
+			else if(player.getYLocation() == 1){ //moves player to the left if in the middle section				
 				x--;
 				totalDice--;
 			}
+			
 			else{
 				player.setXLocation(player.getXLocation()+1);
 				totalDice--;
 			}
 		}
 		
-		// Transfer to other tiles if Eel or Escalator
-		int trait = map[y][x].getTrait();
-		
-		if(trait > 0 && trait < 5){ // Eels
-			for(int b = 0; b < MAP_Y; b++)
-				for(int a = 0; a < MAP_X; a++)
-					if(map[b][a].getTrait() == trait && a != x && b != y){
-						x = a;
-						y = b;
-					}
-		}
-		
-		else if(trait == 5){ // Escalator 1
-			for(int b = 0; b < MAP_Y; b++)
-				for(int a = 0; a < MAP_X; a++)
-					if(map[b][a].getTrait() == 15){
-						x = a;
-						y = b;
-					}
-		}
-			
-		else if(trait == 6){ // Escalator 2
-			for(int b = 0; b < MAP_Y; b++)
-				for(int a = 0; a < MAP_X; a++)
-					if(map[b][a].getTrait() == 16){
-						x = a;
-						y = b;
-					}
-		}
-			
-		else if(trait == 7){ // Escalator 3
-			for(int b = 0; b < MAP_Y; b++)
-				for(int a = 0; a < MAP_X; a++)
-					if(map[b][a].getTrait() == 17){
-						x = a;
-						y = b;
-					}
-		}
-		
+		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
 		// Set x and y of player
-		player.setXLocation(x);
-		player.setYLocation(y);
+		player.setXLocation(map[y][x].getPositionX());
+		player.setYLocation(map[y][x].getPositionY());
 		map[y][x].addPlayer(player);
 		
 	}
