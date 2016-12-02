@@ -144,7 +144,10 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	public GameSession(Socket player1Socket) { 
 		// Initialize our player connections before game start
 		this.player1Socket = player1Socket;
-		player1 = new Player();
+		player1 = new Player(0);
+		player2 = new Player(0);
+		player3 = new Player(0);
+		player4 = new Player(0);
 		genMapDefault(); //generate map
 		
 	}
@@ -226,28 +229,28 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 				// BELOW DECIDES WHICH PLAYER IS THE CURRENT PLAYER
 				currentPlayerTurn = whosNext(currentPlayerTurn);
 				switch(PLAYER_TURN_ORDER[currentPlayerTurn]) {
-					case PLAYER1_TURN:
+					case PLAYER1:
 						currentIn = fromP1;
 						currentOut = toP1;
 						currentPlayer = player1;
 						break;
 						
-					case PLAYER2_TURN:
+					case PLAYER2:
 						currentIn = fromP1;
 						currentOut = toP1;
-						currentPlayer = player1;
+						currentPlayer = player2;
 						break;
 						
-					case PLAYER3_TURN:
+					case PLAYER3:
 						currentIn = fromP1;
 						currentOut = toP1;
-						currentPlayer = player1;
+						currentPlayer = player3;
 						break;
 						
-					case PLAYER4_TURN:
+					case PLAYER4:
 						currentIn = fromP1;
 						currentOut = toP1;
-						currentPlayer = player1;
+						currentPlayer = player4;
 						break;
 				}
 				
@@ -258,17 +261,53 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 					switch (currentIn.readInt()) {
 						case SEND_ROLL_REQUEST:
 							dice = rollDice();
-							movePlayer(currentPlayerTurn, currentPlayer);
+							movePlayer(currentPlayer);
 							currentOut.writeInt(dice[0]);
 							currentOut.writeInt(dice[1]);
-							
 							currentOut.writeInt(PLAYER_WAIT);
 							
-							sendMove(currentOut, x, y, (currentPlayerTurn+1));
+							if (currentPlayer.getPosition() > 28) {
+								System.out.println("PLAYER WON");
+								toP1.writeInt(PLAYER_WON);
+								/*toP2.writeInt(PLAYER1_WIN);
+								toP3.writeInt(PLAYER1_WIN);
+								toP4.writeInt(PLAYER1_WIN);*/
+								switch (currentPlayerTurn+1) {
+									case PLAYER1:
+										toP1.writeInt(PLAYER1_WIN);
+										/*toP2.writeInt(PLAYER1_WIN);
+										toP3.writeInt(PLAYER1_WIN);
+										toP4.writeInt(PLAYER1_WIN);*/
+										break;
+									case PLAYER2:
+										toP1.writeInt(PLAYER2_WIN);
+										/*toP2.writeInt(PLAYER2_WIN);
+										toP3.writeInt(PLAYER2_WIN);
+										toP4.writeInt(PLAYER2_WIN);*/
+										break;
+									case PLAYER3:
+										toP1.writeInt(PLAYER3_WIN);
+										/*toP2.writeInt(PLAYER3_WIN);
+										toP3.writeInt(PLAYER3_WIN);
+										toP4.writeInt(PLAYER3_WIN);*/
+										break;
+									case PLAYER4:
+										toP1.writeInt(PLAYER4_WIN);
+										/*toP2.writeInt(PLAYER4_WIN);
+										toP3.writeInt(PLAYER4_WIN);
+										toP4.writeInt(PLAYER4_WIN);*/
+										break;
+								}
+								
+							}
+							else
+								sendMove(toP1, x, y, (currentPlayerTurn+1));
+								System.out.println("Player: " + currentPlayerTurn + " Position: " + currentPlayer.getPosition());
 							// TODO 
 							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
 							sendMove(toP3, x, y, (currentPlayerTurn+2));
 							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
+						break;
 					}
 
 				}
@@ -326,59 +365,43 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		map[29].setWin();
 		map[13].setLose();
 		
-		// Set Eels
-		map[11].setEel1();
-		map[9].setEel1();
-		map[5].setEel2();
-		map[27].setEel2();
-		map[10].setEel3();
-		map[22].setEel3();
-		
-		
-		// Set Escalators
-		map[3].setEscalator1H();
-		map[24].setEscalator1T();
-		map[7].setEscalator2H();
-		map[17].setEscalator2T();
-		map[11].setEscalator3H();
-		map[20].setEscalator3T();
 		
 		// Set Positions
 		// y = 0
 		map[0].setPosition(424,775);
-		map[1].setPosition(1434,775); // eel 1
+		map[1].setPosition(1434,775); // EEL HEAD R1C1
 		map[2].setPosition(658,775);
-		map[3].setPosition(835,268); //escalator 1 H
+		map[3].setPosition(835,268); //ESCALATOR BOTTOM R1C3
 		map[4].setPosition(872,775);
-		map[5].setPosition(1162,268); //eel 2
+		map[5].setPosition(982,775); // EEL END R1C5
 		map[6].setPosition(1096,775);
-		map[7].setPosition(1184,507); // escalator 2 H
+		map[7].setPosition(1184,507); // ESCALATOR BOTTOM R1C7
 		map[8].setPosition(1308,775);
-		map[9].setPosition(547,775); // eel 1
+		map[9].setPosition(547,775); // EEL END R1C9
 		
 		// y = 1
-		map[10].setPosition(618,268); //eel 3
-		map[11].setPosition(392,268); //escalator 3 H
-		map[12].setPosition(628,507);
-		map[13].setPosition(183,757); // You Lose
-		map[14].setPosition(858,507);
-		map[15].setPosition(966,507);
-		map[16].setPosition(1081,507);
-		map[17].setPosition(1184,507); // escalator 2 T
-		map[18].setPosition(1293,507);
-		map[19].setPosition(1424,507);
+		map[10].setPosition(1420,507); 
+		map[11].setPosition(1292,507); 
+		map[12].setPosition(1179,507); // ESCALATOR TOP R2C7
+		map[13].setPosition(1080,507); 
+		map[14].setPosition(964,507);
+		map[15].setPosition(859,507);
+		map[16].setPosition(749,507); // EEL END R2C3
+		map[17].setPosition(628,507); 
+		map[18].setPosition(514,507); // ESCALATOR BOTOM R2C8
+		map[19].setPosition(395,507); // EEL HEAD R2C9
 		
 		// y = 2
-		map[20].setPosition(392,268); //escalator 3 T
-		map[21].setPosition(516,268);
-		map[22].setPosition(392,507); //eel 3 
-		map[23].setPosition(725,268);
-		map[24].setPosition(835,268); //escalator 1 T
-		map[25].setPosition(948,268);
-		map[26].setPosition(1055,268);
-		map[27].setPosition(985,775); //eel 2
-		map[28].setPosition(1271,268);
-		map[29].setPosition(1388,268);
+		map[20].setPosition(380,268); // ESCALATOR TOP R3C0
+		map[21].setPosition(510,268);
+		map[22].setPosition(616,268); // EEL END R3C2
+		map[23].setPosition(734,268);
+		map[24].setPosition(836,268); // ESCALATOR TOP R3C4
+		map[25].setPosition(949,268);
+		map[26].setPosition(1064,268);
+		map[27].setPosition(982,775); // EEL HEAD R3C7
+		map[28].setPosition(1275,268);
+		map[29].setPosition(1396,268);
 		
 	}
 	
@@ -387,51 +410,73 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	}
 	
 	//TODO - implement into server function
-	public void movePlayer(int playerID, Player player) { //used after the dice has been rolled
+	public void movePlayer(Player player) { //used after the dice has been rolled
 		int pos = player.getPosition();
+		map[pos].removePlayer(); //remove player from tile
 		int totalDice = dice[0] + dice[1];
+		switch (pos + totalDice) {
+		// Eels
+		case 1:
+			pos = 9;
+			break;
+		case 27:
+			pos = 5;
+			break;
+		case 19:
+			pos = 22;
+			break;
+		case 16:
+			pos = 0;
+			break;
 		
-		map[pos].removePlayer(playerID); //remove player from tile
+		// Escalators
+		case 3:
+			pos = 24;
+			break;
 		
+		case 7:
+			pos = 12;
+			break;
+			
+		case 18:
+			pos = 20;
+			break;
+			
+		default:
+			pos += totalDice;
+			break;
+			
+		}
+		
+		if ( pos > 29) {
+			player.setPosition(30);
+		}
+		else {
 		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
 		// Set x and y of player
-		map[pos + totalDice].addPlayer(playerID);
-		x = map[pos + totalDice].getPositionX();
-		y = map[pos + totalDice].getPositionY();
+		System.out.println(pos);
+		map[pos].addPlayer();
+		player.setPosition(pos);
+		x = map[pos].getPositionX();
+		y = map[pos].getPositionY();
+		}
 		
 	}
 
 
-public class Tile extends JPanel {
-	
-	private static final long serialVersionUID = 1L;
+public class Tile {
 
-	//private Player[] currentPlayers; //players on tile
-	private int[] players;
-	
-	//Traits of tiles for the map
-	//eel1 = 1; 
-	//eel2 = 2; 
-	//eel3 = 3; 
-	//eel4 = 4;
-	//escalator1H = 5; 
-	//escalator2H = 6; 
-	//escalator3H = 7;
-	//escalator1T = 15; 
-	//escalator2T = 16; 
-	//escalator3T = 17;
-	//win = 8;
-	//lose = 9;
-	//start = 10; 
-	
-	private int trait = 0; //indicates type of tile
+	private int players;
 	private int positionX = 0; //tile position
 	private int positionY = 0;	
-	
+	private boolean isStart;
+	private boolean isFinish;
+	private boolean isLose;
 	
 	
 	public Tile(){
-		players = new int[4];
+		players = 0;
+		
 	}
 	
 	public Tile(int posX, int posY){
@@ -440,74 +485,14 @@ public class Tile extends JPanel {
 		positionY = posY;
 	}
 	
-	public void addPlayer (int player){ 
-		players[player] = player;
+	public void addPlayer (){ 
+		players++;
 	}
 	
-	public void removePlayer(int player){ 
-		players[player] = 4;
+	public void removePlayer(){ 
+		players--;
 	}
 	
-	public void resetPlayers(){
-		players = new int[4];
-	}
-	
-	//mutators
-	public void setTrait(int x){
-		trait = x;
-	}
-	
-	public void setEel1(){
-		trait = 1;
-	}
-	
-	public void setEel2(){
-		trait = 2;
-	}
-	
-	public void setEel3(){
-		trait = 3;
-	}
-	
-	public void setEel4(){
-		trait = 4;
-	}
-	
-	public void setEscalator1H(){
-		trait = 5;
-	}
-	
-	public void setEscalator2H(){
-		trait = 6;
-	}
-	
-	public void setEscalator3H(){
-		trait = 7;
-	}
-	
-	public void setEscalator1T(){
-		trait = 15;
-	}
-	
-	public void setEscalator2T(){
-		trait = 16;
-	}
-	
-	public void setEscalator3T(){
-		trait = 17;
-	}
-	
-	public void setWin(){
-		trait = 8;
-	}
-	
-	public void setLose(){
-		trait = 9;
-	}
-	
-	public void setStart(){
-		trait = 10;
-	}
 	
 	public void setPositionX(int posX){
 		positionX = posX;
@@ -522,59 +507,6 @@ public class Tile extends JPanel {
 		positionY = posY;
 	}
 	
-	//accessors
-	public boolean isEel1(){
-		return trait == 1;
-	}
-		
-	public boolean isEel2(){
-		return trait == 2;
-	}
-		
-	public boolean isEel3(){
-		return trait == 3;
-	}
-		
-	public boolean isEel4(){
-		return trait == 4;
-	}
-		
-	public boolean isEscalator1H(){
-		return trait == 5;
-	}
-	
-	public boolean isEscalator2H(){
-		return trait == 6;
-	}
-	
-	public boolean isEscalator3H(){
-		return trait == 7;
-	}
-	
-	public boolean isEscalator1T(){
-		return trait == 15;
-	}
-	
-	public boolean isEscalator2T(){
-		return trait == 16;
-	}
-	
-	public boolean isEscalator3T(){
-		return trait == 17;
-	}
-		
-	public boolean isWin(){
-		return trait == 8;
-	}
-	
-	public boolean isLose(){
-		return trait == 9;
-	}
-		
-	public boolean isStart(){
-		return trait == 0;
-	}
-	
 	public int getPositionX(){
 		return positionX;
 	}
@@ -583,24 +515,27 @@ public class Tile extends JPanel {
 		return positionY;
 	}
 	
-	public int getTrait(){
-		return trait;
-	}
-	/*
-	public Player getPlayerArray(int index){
-		return currentPlayers[index];
+	public boolean getStart() {
+		return isStart;
 	}
 	
-	public Player[] getPlayerArray(){
-		return currentPlayers;
+	public void setStart() {
+		isStart = true;
 	}
-	*/
-	public int getArray(int index){
-		return players[index];
+
+	public boolean getLose() {
+		return isLose;
 	}
 	
-	public int[] getArray(){
-		return players;
+	public void setLose() {
+		isLose = true;
+	}
+	public boolean getWin() {
+		return isFinish;
+	}
+	
+	public void setWin() {
+		isFinish = true;
 	}
 	
 }
