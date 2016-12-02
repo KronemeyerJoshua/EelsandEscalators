@@ -19,6 +19,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	// Declare Vars
 	private JLabel contentPane;
 	private JTextArea outputText;
+	private JScrollPane scrollPane;
 	private boolean myTurn = false;
 	private boolean wait = true;
 	private String host = "127.0.0.1";
@@ -102,8 +103,8 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		panel.setSize(50,80);
 		panel.setLocation(50,900);
 		
-		JTextArea outputText = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(outputText);
+		outputText = new JTextArea();
+        scrollPane = new JScrollPane(outputText);
         contentPane.add(scrollPane);
         scrollPane.setSize(200,800);
         scrollPane.setLocation(1600,100);
@@ -173,7 +174,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		});
 		
-		/*contentPane.addMouseListener(new MouseListener() {
+		contentPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				int x = e.getX();
 				int y = e.getY();
@@ -204,7 +205,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 				
 			}
 
-		});*/
+		});
 		
 	}
 	
@@ -278,6 +279,10 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						receiveMove(player, x, y);
 						break;
 						
+					case PLAYER_WON:
+						currentStatus = inputStream.readInt();
+						win(currentStatus);
+						break;
 				}
 				
 			}
@@ -287,7 +292,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		}
 	
-	  private void waitForPlayer() throws InterruptedException {
+	private void waitForPlayer() throws InterruptedException {
 		    while (waiting) {
 		      Thread.sleep(100);
 		    }
@@ -295,6 +300,22 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		    waiting = true;
 		  }
 
+	private void win(int player) {
+		switch (player) {
+			case PLAYER1_WIN:
+				outputText.append("PLAYER 1 HAS WON THE GAME!");
+				break;
+			case PLAYER2_WIN:
+				outputText.append("PLAYER 2 HAS WON THE GAME!");
+				break;
+			case PLAYER3_WIN:
+				outputText.append("PLAYER 3 HAS WON THE GAME!");
+				break;
+			case PLAYER4_WIN:
+				outputText.append("PLAYER 4 HAS WON THE GAME!");
+				break;
+		}
+	}
 	
 	private void receiveMove(int currentPlayer, int x ,int y){
         switch (currentPlayer){
