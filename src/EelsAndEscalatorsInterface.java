@@ -30,7 +30,7 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER_WAIT = 12;
 	int PLAYER_GO = 13;
 	int RECEIVE_ROLL = 14;
-	int END_PLAYER_TURN = -11;
+	int END_PLAYER_TURN = 17;
 	
 	// Any string constants should be put below this line
 	String ROLLDICEMSG = "Please roll dice.";

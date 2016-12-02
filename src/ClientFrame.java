@@ -161,10 +161,6 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						dii = inputStream.readInt();
 						lblDi_1.setText(Integer.toString(dii));
 						
-						int player = inputStream.readInt();
-						int x = inputStream.readInt();
-						int y = inputStream.readInt();
-						receiveMove(player, x, y);
 						waiting = false;
 					}
 						
@@ -274,6 +270,14 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						myTurn = true;
 						waitForPlayer();
 						break;
+						
+					case END_PLAYER_TURN:
+						int player = inputStream.readInt();
+						int x = inputStream.readInt();
+						int y = inputStream.readInt();
+						receiveMove(player, x, y);
+						break;
+						
 				}
 				
 			}

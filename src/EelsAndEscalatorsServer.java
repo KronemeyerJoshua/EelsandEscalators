@@ -224,7 +224,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 			while (true) {
 				// DEBUGGING NOTE: TODO ALL TURNS ARE PLAYER1 FOR TESTING PURPOSES
 				// BELOW DECIDES WHICH PLAYER IS THE CURRENT PLAYER
-				switch(PLAYER_TURN_ORDER[whosNext(currentPlayerTurn)]) {
+				currentPlayerTurn = whosNext(currentPlayerTurn);
+				switch(PLAYER_TURN_ORDER[currentPlayerTurn]) {
 					case PLAYER1_TURN:
 						currentIn = fromP1;
 						currentOut = toP1;
@@ -257,21 +258,17 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 					switch (currentIn.readInt()) {
 						case SEND_ROLL_REQUEST:
 							dice = rollDice();
-							movePlayer(whosNext(currentPlayerTurn), currentPlayer);
+							movePlayer(currentPlayerTurn, currentPlayer);
 							currentOut.writeInt(dice[0]);
 							currentOut.writeInt(dice[1]);
-
-							// Sends to all
-							currentOut.writeInt(currentPlayerTurn+2);
-							sendMove(currentOut, x, y);
-							// TODO 
-							/*sendMove(toP2, x, y);
-							sendMove(toP3, x, y);
-							sendMove(toP4, x, y);*/
 							
 							currentOut.writeInt(PLAYER_WAIT);
-							currentPlayerTurn++;
-							break;	
+							
+							sendMove(currentOut, x, y, (currentPlayerTurn+1));
+							// TODO 
+							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
+							sendMove(toP3, x, y, (currentPlayerTurn+2));
+							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
 					}
 
 				}
@@ -282,7 +279,9 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		// END SERVER MAIN LOGIC LOOP
 	}
 	
-	private void sendMove(DataOutputStream out, int x, int y) throws IOException{
+	private void sendMove(DataOutputStream out, int x, int y, int playerTurn) throws IOException{
+		out.writeInt(END_PLAYER_TURN);
+		out.writeInt(playerTurn);
 		out.writeInt(x);
 		out.writeInt(y);
 	}
@@ -391,41 +390,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	public void movePlayer(int playerID, Player player) { //used after the dice has been rolled
 		int pos = player.getPosition();
 		int totalDice = dice[0] + dice[1];
-	/*	int moveAmount, val;
-		int totalDice = dice[0] + dice[1];
-		for(int a = 0; a < MAP_X; a++){
-			for(int b = 0; b < MAP_Y; b++){				
-					val = map[b][a].getArray(player);
-					if(player == val){
-						x = a;
-						y = b;
-					}
-			}
-		} */
 		
 		map[pos].removePlayer(playerID); //remove player from tile
-		
-		/*while(totalDice > 0){
-			if(x + totalDice > MAP_X-1 || (x - totalDice < 0 && y == 1)){
-				
-				moveAmount = (MAP_X-1) - x; //space between the end of the map and current Tile
-				totalDice = totalDice - moveAmount - 1; //set amount left
-				
-				x = MAP_X - 1;
-				y++;
-				
-			}
-			
-			else if(y == 1){ //moves player to the left if in the middle section				
-				x--;
-				totalDice--;
-			}
-			
-			else{
-				x++;
-				totalDice--;
-			}
-		}*/
 		
 		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
 		// Set x and y of player
