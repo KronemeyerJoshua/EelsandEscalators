@@ -80,7 +80,6 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 			Socket player1 = socket.accept();
 			outputText.append("\nPlayer 1 now connecting from " + player1.getInetAddress().getHostAddress());
 			//Notify that player is player 1
-			new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
 			
 			/*
 			Socket player2 = socket.accept();
@@ -102,14 +101,13 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 			// ALL PLAYERS HAVE BEEN CONNECTED
 			// BEGIN OUR SERVER LOGIC LOOP
 			outputText.append("\n" + MAX_CONNECTED);
-			GameSession session = new GameSession(player1 /*, player2, player3, player4*/); //TODO
+			GameSession session = new GameSession(player1); //TODO
 			new Thread(session).start();
-			session.run();
 		}
 		catch (Exception e) {
 			outputText.append(e.toString());
 		}
-		outputText.append("\n\n" + new Date() + ": Server is Closed." );
+		//outputText.append("\n\n" + new Date() + ": Server is Closed." );
 		// END HOSTING SERVER
 	}
 	
@@ -126,14 +124,16 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	Random rand = new Random();
 	
 	//Create the map tiles
-	final int MAP_X = 10; int MAP_Y = 3;
-	private Tile[][] map; //map
+	private Tile[] map = new Tile[30]; //map
 	
 	// Create our sockets to player clients
-	private Socket player1;
-	private Socket player2;
-	private Socket player3;
-	private Socket player4;
+	private Socket player1Socket;
+	private Socket player2Socket;
+	private Socket player3Socket;
+	private Socket player4Socket;
+	
+	// Players
+	private Player player1, player2, player3, player4, currentPlayer;
 	
 	// OUR CURRENT PLAYER SELECTION IN AND OUT STREAM
 	private DataInputStream currentIn;
@@ -141,21 +141,21 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	// BEGIN CONSTRUCTORS
 	// @param1 Our socket connection to player1 client
-	public GameSession(Socket player1) { 
+	public GameSession(Socket player1Socket) { 
 		// Initialize our player connections before game start
-		this.player1 = player1;
-		
+		this.player1Socket = player1Socket;
+		player1 = new Player();
 		genMapDefault(); //generate map
 		
 	}
 	
 	// @param1 Our socket connection to player1 client
 	// @param2 Our socket connection to player2 client
-	public GameSession(Socket player1, Socket player2) {
+	public GameSession(Socket player1Socket, Socket player2Socket) {
 		
 		// Initialize our player connections before game start
-		this.player1 = player1;
-		this.player2 = player2;
+		this.player1Socket = player1Socket;
+		this.player2Socket = player2Socket;
 		
 		genMapDefault(); //generate map
 		
@@ -164,12 +164,12 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	// @param1 Our socket connection to player1 client
 	// @param2 Our socket connection to player2 client
 	// @param3 Our socket connection to player3 client
-	public GameSession(Socket player1, Socket player2, Socket player3) {
+	public GameSession(Socket player1Socket, Socket player2Socket, Socket player3Socket) {
 		
 		// Initialize our player connections before game start
-		this.player1 = player1;
-		this.player2 = player2;
-		this.player3 = player3;
+		this.player1Socket = player1Socket;
+		this.player2Socket = player2Socket;
+		this.player3Socket = player3Socket;
 		
 		genMapDefault(); //generate map
 	}
@@ -178,13 +178,13 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	// @param2 Our socket connection to player2 client
 	// @param3 Our socket connection to player3 client
 	// @param4 Our socket connection to player4 client
-	public GameSession(Socket player1, Socket player2, Socket player3, Socket player4) {
+	public GameSession(Socket player1Socket, Socket player2Socket, Socket player3Socket, Socket player4Socket) {
 		
 		// Initialize our player connections before game start
-		this.player1 = player1;
-		this.player2 = player2;
-		this.player3 = player3;
-		this.player4 = player4;
+		this.player1Socket = player1Socket;
+		this.player2Socket = player2Socket;
+		this.player3Socket = player3Socket;
+		this.player4Socket = player4Socket;
 		
 		genMapDefault(); //generate map
 		
@@ -198,19 +198,19 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 			currentPlayerTurn = -1;
 			// Initialize our in and out streams to send/receive from our player clients
 			// DEBUGGING NOTE: TODO PLAYER IN/OUT STREAMS ARE COMMENTED OUT FOR TESTING PURPOSES
-			DataInputStream fromP1 = new DataInputStream(player1.getInputStream());
+			DataInputStream fromP1 = new DataInputStream(player1Socket.getInputStream());
 			/*
-			DataInputStream fromP2 = new DataInputStream(player2.getInputStream());
-			DataInputStream fromP3 = new DataInputStream(player3.getInputStream());
-			DataInputStream fromP4 = new DataInputStream(player4.getInputStream());
+			DataInputStream fromP2 = new DataInputStream(player2Socket.getInputStream());
+			DataInputStream fromP3 = new DataInputStream(player3Socket.getInputStream());
+			DataInputStream fromP4 = new DataInputStream(player4Socket.getInputStream());
 			*/
 			
 			
-			DataOutputStream toP1 = new DataOutputStream(player1.getOutputStream());
+			DataOutputStream toP1 = new DataOutputStream(player1Socket.getOutputStream());
 			/*
-			DataOutputStream toP2 = new DataOutputStream(player2.getOutputStream());
-			DataOutputStream toP3 = new DataOutputStream(player3.getOutputStream());
-			DataOutputStream toP4 = new DataOutputStream(player4.getOutputStream());
+			DataOutputStream toP2 = new DataOutputStream(player2Socket.getOutputStream());
+			DataOutputStream toP3 = new DataOutputStream(player3Socket.getOutputStream());
+			DataOutputStream toP4 = new DataOutputStream(player4Socket.getOutputStream());
 			*/
 			
 			toP1.writeInt(PLAYER_WAIT);
@@ -228,48 +228,49 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 					case PLAYER1_TURN:
 						currentIn = fromP1;
 						currentOut = toP1;
-						
+						currentPlayer = player1;
 						break;
 						
 					case PLAYER2_TURN:
 						currentIn = fromP1;
 						currentOut = toP1;
-						
+						currentPlayer = player1;
 						break;
 						
 					case PLAYER3_TURN:
 						currentIn = fromP1;
 						currentOut = toP1;
-						
+						currentPlayer = player1;
 						break;
 						
 					case PLAYER4_TURN:
 						currentIn = fromP1;
 						currentOut = toP1;
-						
+						currentPlayer = player1;
 						break;
 				}
 				
 				// TELL THE CLIENT THAT IT IS THIS PLAYERS TURN
-				currentOut.writeInt(whosNext(currentPlayerTurn));
 				currentOut.writeInt(PLAYER_GO);
 				
 				// RECEIVE THE REQUEST FROM THE CLIENT
 					switch (currentIn.readInt()) {
 						case SEND_ROLL_REQUEST:
 							dice = rollDice();
-							movePlayer(currentPlayerTurn);
+							movePlayer(whosNext(currentPlayerTurn), currentPlayer);
 							currentOut.writeInt(dice[0]);
 							currentOut.writeInt(dice[1]);
 
 							// Sends to all
-							sendMove(toP1, x, y);
-							/* TODO
-							sendMove(toP2, x, y);
+							currentOut.writeInt(currentPlayerTurn+2);
+							sendMove(currentOut, x, y);
+							// TODO 
+							/*sendMove(toP2, x, y);
 							sendMove(toP3, x, y);
-							sendMove(toP4, x, y);
-							*/
+							sendMove(toP4, x, y);*/
+							
 							currentOut.writeInt(PLAYER_WAIT);
+							currentPlayerTurn++;
 							break;	
 					}
 
@@ -316,69 +317,69 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	}
 	
 	public void genMapDefault(){ //regular map generation 
-		map = new Tile[MAP_Y][MAP_X];
-		for(int x = 0; x < MAP_X; x++){
-			for(int y = 0; y < MAP_Y; y++){
-				map[y][x] = new Tile(x, y);
-			}
+		
+		for (int i = 0; i < 30; i++) {
+			map[i] = new Tile();
 		}
+		
 		// Set Start & Finish
-		map[0][0].setStart();
-		map[2][9].setWin();
-		map[1][3].setLose();
+		map[0].setStart();
+		map[29].setWin();
+		map[13].setLose();
 		
 		// Set Eels
-		map[0][1].setEel1();
-		map[0][9].setEel1();
-		map[0][5].setEel2();
-		map[2][7].setEel2();
-		map[1][0].setEel3();
-		map[2][2].setEel3();
+		map[11].setEel1();
+		map[9].setEel1();
+		map[5].setEel2();
+		map[27].setEel2();
+		map[10].setEel3();
+		map[22].setEel3();
+		
 		
 		// Set Escalators
-		map[0][3].setEscalator1H();
-		map[2][4].setEscalator1T();
-		map[0][7].setEscalator2H();
-		map[1][7].setEscalator2T();
-		map[1][1].setEscalator3H();
-		map[2][0].setEscalator3T();
+		map[3].setEscalator1H();
+		map[24].setEscalator1T();
+		map[7].setEscalator2H();
+		map[17].setEscalator2T();
+		map[11].setEscalator3H();
+		map[20].setEscalator3T();
 		
 		// Set Positions
 		// y = 0
-		map[0][0].setPosition(424,775);
-		map[0][1].setPosition(1434,775); // eel 1
-		map[0][2].setPosition(658,775);
-		map[0][3].setPosition(835,268); //escalator 1 H
-		map[0][4].setPosition(872,775);
-		map[0][5].setPosition(1162,268); //eel 2
-		map[0][6].setPosition(1096,775);
-		map[0][7].setPosition(1184,507); // escalator 2 H
-		map[0][8].setPosition(1308,775);
-		map[0][9].setPosition(547,775); // eel 1
+		map[0].setPosition(424,775);
+		map[1].setPosition(1434,775); // eel 1
+		map[2].setPosition(658,775);
+		map[3].setPosition(835,268); //escalator 1 H
+		map[4].setPosition(872,775);
+		map[5].setPosition(1162,268); //eel 2
+		map[6].setPosition(1096,775);
+		map[7].setPosition(1184,507); // escalator 2 H
+		map[8].setPosition(1308,775);
+		map[9].setPosition(547,775); // eel 1
 		
 		// y = 1
-		map[1][0].setPosition(618,268); //eel 3
-		map[1][1].setPosition(392,268); //escalator 3 H
-		map[1][2].setPosition(628,507);
-		map[1][3].setPosition(183,757); // You Lose
-		map[1][4].setPosition(858,507);
-		map[1][5].setPosition(966,507);
-		map[1][6].setPosition(1081,507);
-		map[1][7].setPosition(1184,507); // escalator 2 T
-		map[1][8].setPosition(1293,507);
-		map[1][9].setPosition(1424,507);
+		map[10].setPosition(618,268); //eel 3
+		map[11].setPosition(392,268); //escalator 3 H
+		map[12].setPosition(628,507);
+		map[13].setPosition(183,757); // You Lose
+		map[14].setPosition(858,507);
+		map[15].setPosition(966,507);
+		map[16].setPosition(1081,507);
+		map[17].setPosition(1184,507); // escalator 2 T
+		map[18].setPosition(1293,507);
+		map[19].setPosition(1424,507);
 		
 		// y = 2
-		map[2][0].setPosition(392,268); //escalator 3 T
-		map[2][1].setPosition(516,268);
-		map[2][2].setPosition(392,507); //eel 3 
-		map[2][3].setPosition(725,268);
-		map[2][4].setPosition(835,268); //escalator 1 T
-		map[2][5].setPosition(948,268);
-		map[2][6].setPosition(1055,268);
-		map[2][7].setPosition(985,775); //eel 2
-		map[2][8].setPosition(1271,268);
-		map[2][9].setPosition(1388,268);
+		map[20].setPosition(392,268); //escalator 3 T
+		map[21].setPosition(516,268);
+		map[22].setPosition(392,507); //eel 3 
+		map[23].setPosition(725,268);
+		map[24].setPosition(835,268); //escalator 1 T
+		map[25].setPosition(948,268);
+		map[26].setPosition(1055,268);
+		map[27].setPosition(985,775); //eel 2
+		map[28].setPosition(1271,268);
+		map[29].setPosition(1388,268);
 		
 	}
 	
@@ -387,8 +388,10 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	}
 	
 	//TODO - implement into server function
-	public void movePlayer(int player){ //used after the dice has been rolled
-		int moveAmount, val;
+	public void movePlayer(int playerID, Player player) { //used after the dice has been rolled
+		int pos = player.getPosition();
+		int totalDice = dice[0] + dice[1];
+	/*	int moveAmount, val;
 		int totalDice = dice[0] + dice[1];
 		for(int a = 0; a < MAP_X; a++){
 			for(int b = 0; b < MAP_Y; b++){				
@@ -398,11 +401,11 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 						y = b;
 					}
 			}
-		}
+		} */
 		
-		map[y][x].removePlayer(player); //remove player from tile
+		map[pos].removePlayer(playerID); //remove player from tile
 		
-		while(totalDice > 0){
+		/*while(totalDice > 0){
 			if(x + totalDice > MAP_X-1 || (x - totalDice < 0 && y == 1)){
 				
 				moveAmount = (MAP_X-1) - x; //space between the end of the map and current Tile
@@ -422,13 +425,13 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 				x++;
 				totalDice--;
 			}
-		}
+		}*/
 		
 		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
 		// Set x and y of player
-		map[y][x].addPlayer(player);
-		x = map[y][x].getPositionX();
-		y = map[y][x].getPositionY();
+		map[pos + totalDice].addPlayer(playerID);
+		x = map[pos + totalDice].getPositionX();
+		y = map[pos + totalDice].getPositionY();
 		
 	}
 
@@ -635,4 +638,24 @@ public class Tile extends JPanel {
 	}
 	
 }
+
+public class Player {
+	private int tilePosition;
+	Player(int tile) {
+		tilePosition = tile;
+	}
+	
+	Player() {
+		tilePosition = 0;
+	}
+	
+	public int getPosition() {
+		return tilePosition;
+	}
+	
+	public void setPosition(int pos) {
+		tilePosition = pos;
+	}
+}
+
 }
