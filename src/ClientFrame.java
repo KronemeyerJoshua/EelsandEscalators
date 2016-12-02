@@ -154,11 +154,17 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			public void actionPerformed(ActionEvent e) {
 				try { 
 					if(myTurn) {
+						
 						outputStream.writeInt(SEND_ROLL_REQUEST);
 						int dii = inputStream.readInt();
 						lblDi.setText(Integer.toString(dii));
 						dii = inputStream.readInt();
 						lblDi_1.setText(Integer.toString(dii));
+						
+						int player = inputStream.readInt();
+						int x = inputStream.readInt();
+						int y = inputStream.readInt();
+						receiveMove(player, x, y);
 						waiting = false;
 					}
 						
@@ -170,8 +176,8 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 				}
 			}
 		});
-		/*
-		contentPane.addMouseListener(new MouseListener() {
+		
+		/*contentPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				int x = e.getX();
 				int y = e.getY();
@@ -202,8 +208,8 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 				
 			}
 
-		});
-		*/
+		});*/
+		
 	}
 	
 	
@@ -234,10 +240,10 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			inputStream = new DataInputStream(socket.getInputStream());
 			outputStream = new DataOutputStream(socket.getOutputStream());
 			
-			Thread thread = new Thread(this);
-		    thread.start();
 			connected = true;
 			getServerInfo();
+			Thread thread = new Thread(this);
+		    thread.start();
 			return true;
 			
 		}
@@ -253,35 +259,23 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 
 	//TODO -need to fix
 	public void run() {
-		int x, y;
-		try {
-			player = inputStream.readInt();
-			myNumber = player;
-			//outputText.append("Player " + player);
-		} catch (Exception e) {
-			System.out.println("ouputText error");
-		}
-		
-		
 		while(true) {
 			try {
-				player = inputStream.readInt();
 				int currentStatus = inputStream.readInt();
+				System.out.println(currentStatus);
 				switch(currentStatus) {
 				
 					case PLAYER_WAIT:
+						
 						myTurn = false;
 						break;
 						
 					case PLAYER_GO:
 						myTurn = true;
-						outputText.append("\n" + ROLLDICEMSG);
-						//waitForPlayer();
-						x = inputStream.readInt();
-						y = inputStream.readInt();
-						receiveMove(player, x, y);
+						waitForPlayer();
 						break;
 				}
+				
 			}
 			catch (Exception ex) {
 				System.out.println(ex.toString());
@@ -302,19 +296,15 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
         switch (currentPlayer){
             case 1:
             	playerSprite.setLocation(x, y); 
-            	myTurn = false;
                 break;
             case 2:
             	playerSprite2.setLocation(x, y);
-            	myTurn = false;
                 break;
             case 3:
             	playerSprite3.setLocation(x, y); 
-            	myTurn = false;
                 break;
             case 4:
             	playerSprite4.setLocation(x, y); 
-            	myTurn = false;
                 break;
                 
         } 
