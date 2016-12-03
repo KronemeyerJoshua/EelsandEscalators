@@ -11,16 +11,15 @@ public interface EelsAndEscalatorsInterface {
 	
 	// Player Lose Identification
 	int PLAYER_LOST = 84;
-	int PLAYER1_LOSE = 10;
-	int PLAYER2_LOSE = 20;
-	int PLAYER3_LOSE = 30;
-	int PLAYER4_LOSE = 40;
+
 	
 	// Actions Performed
 	int SEND_ROLL_REQUEST = 99;
 	int PLAYER_WAIT = 12;
 	int PLAYER_GO = 13;
 	int END_PLAYER_TURN = 17;
+	int EEL_HIT = 19;
+	int ESC_HIT = 20;
 	
 	// Any string constants should be put below this line
 	String ROLLDICEMSG = "Please roll dice.";
@@ -36,8 +35,8 @@ public interface EelsAndEscalatorsInterface {
 	int PATRICK = 126;
 	
 	// Player Tokens
-	String MRKRABS_TOKEN = "123.png"; 
-	String SQUIDWARD_TOKEN = "124.png";
-	String SPONGEBOB_TOKEN = "125.png";
-	String PATRICK_TOKEN = "126.png";
+	String MRKRABS_TOKEN = "src/123.png"; 
+	String SQUIDWARD_TOKEN = "src/124.png";
+	String SPONGEBOB_TOKEN = "src/125.png";
+	String PATRICK_TOKEN = "src/126.png";
 }
