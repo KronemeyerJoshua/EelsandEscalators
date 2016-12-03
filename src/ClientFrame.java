@@ -56,17 +56,17 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	 */
 	public ClientFrame() {
 		// BEGIN PLAYER SPRITE CREATION
-		playerSprite = new JLabel(rescaleSprite("src/123.png"));
-		playerSprite2 = new JLabel(rescaleSprite("src/124.png"));
-		playerSprite3 = new JLabel(rescaleSprite("src/125.png"));
-		playerSprite4 = new JLabel(rescaleSprite("src/126.png"));
+		playerSprite = new JLabel(rescaleSprite("src/resources/123.png"));
+		playerSprite2 = new JLabel(rescaleSprite("src/resources/124.png"));
+		playerSprite3 = new JLabel(rescaleSprite("src/resources/125.png"));
+		playerSprite4 = new JLabel(rescaleSprite("src/resources/126.png"));
 		// END PLAYER SPRITE CREATION
 		
 		// CREATE OUR MAIN WINDOW AND BACKGROUND
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1844, 1080);
 		setResizable(false);
-		contentPane = new JLabel(new ImageIcon("src/EelsAndEscalatorsYouLose.jpg"));
+		contentPane = new JLabel(new ImageIcon("src/resources/EelsAndEscalatorsYouLose.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
