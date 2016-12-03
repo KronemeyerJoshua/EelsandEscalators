@@ -90,10 +90,11 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		// TEXT AREA
 		outputText = new JTextArea();
 		outputText.setWrapStyleWord(true);
-        scrollPane = new JScrollPane(outputText);
+		outputText.setLineWrap(true);
+        scrollPane = new JScrollPane(outputText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(scrollPane);
-        scrollPane.setSize(200,800);
-        scrollPane.setLocation(1600,100);
+        scrollPane.setSize(300,800);
+        scrollPane.setLocation(1500,100);
 		
 		
 		
@@ -179,6 +180,13 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		
 	}
 	
+	
+	public void sendWelcomeMessage(int playerID) {
+		outputText.append("Welcome to Eels and Escalators! Looks like you're Player " + playerID + " so you will go " + playerID + "\n\n");
+		outputText.append("Typically Eels will take you back and Escalators will progress you forward, but since our designer obviously didn't realize this, we have a mix. \n\n");
+		outputText.append("The game ends when a player reaches the finish line. Good luck!\n\n");
+	}
+	
 	// HELPER FUNCTION FOR RESIZING SPRITES
 	public ImageIcon rescaleSprite(String path) {
 		ImageIcon plSprite = new ImageIcon(path); 
@@ -213,9 +221,10 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	
 
 	public void run() {
-		int playerID = 0, currentPlayer;
+		int playerID = 1, currentPlayer = 1;
 		try {
 		playerID = inputStream.readInt();
+		sendWelcomeMessage(playerID);
 		}
 		catch (Exception e) {
 			System.out.println(e.toString());
@@ -244,11 +253,11 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 					
 					// PLAYER HAS WON THE GAME
 					case PLAYER_WON:
-						win(inputStream.readInt());
+						win(currentPlayer);
 						break;
 						
 					case PLAYER_LOST:
-						lost(inputStream.readInt(), playerID);
+						lost(currentPlayer, playerID);
 						break;
 				}
 				
@@ -268,62 +277,18 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		  }
 
 	private void updateStatus(int myID, int current) {
-		if (myID == current) {
-			lblStatus.setText("It's MY turn.");
-		}
-		else {
-		switch (current+1) {
-			case 1:
-				lblStatus.setText("It's PLAYER1's turn.");
-				break;
-			case 2:
-				lblStatus.setText("It's PLAYER2's turn.");
-				break;
-			case 3:
-				lblStatus.setText("It's PLAYER3's turn.");
-				break;
-			case 4:
-				lblStatus.setText("It's PLAYER4's turn.");
-				break;
-		}
-		}
+			lblStatus.setText("PLAYER " + current + " WENT LAST");
 	}
 	// END GAME IF CALLED
-	private void win(int player) {
-		switch (player) {
-			case PLAYER1_WIN:
-				outputText.append("PLAYER 1 HAS WON THE GAME!\n");
-				break;
-			case PLAYER2_WIN:
-				outputText.append("PLAYER 2 HAS WON THE GAME!\n");
-				break;
-			case PLAYER3_WIN:
-				outputText.append("PLAYER 3 HAS WON THE GAME!\n");
-				break;
-			case PLAYER4_WIN:
-				outputText.append("PLAYER 4 HAS WON THE GAME!\n");
-				break;
-		}
+	private void win(int current) {
+		outputText.append("PLAYER " + current + " HAS WON THE GAME!\n");
 		panel.remove(btnRoll);
 		panel.remove(lblDi_1);
 		lblDi.setText("GAME OVER");
 	}
 	
 	private void lost(int player, int playerID) {
-		switch (player) {
-		case PLAYER1_LOSE:
-			outputText.append("PLAYER 1 HAS LOST THE GAME!\n");
-			break;
-		case PLAYER2_LOSE:
-			outputText.append("PLAYER 2 HAS LOST THE GAME!\n");
-			break;
-		case PLAYER3_LOSE:
-			outputText.append("PLAYER 3 HAS LOST THE GAME!\n");
-			break;
-		case PLAYER4_LOSE:
-			outputText.append("PLAYER 4 HAS LOST THE GAME!\n");
-			break;
-	}
+		outputText.append("PLAYER " + player + " HAS LOST THE GAME!\n");
 		if (player == playerID) {
 			panel.remove(btnRoll);
 			panel.remove(lblDi_1);
