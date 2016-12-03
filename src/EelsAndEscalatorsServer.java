@@ -341,11 +341,10 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 						break;
 					}
 				}
-
 				}
 			}
 		catch (Exception e) {
-			System.out.println(e.toString());
+			System.out.println("SERVER LOOP: " + e.toString());
 		}
 		// END SERVER MAIN LOGIC LOOP
 	}
@@ -359,28 +358,13 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	
 	private int whosNext(int c) {
-		if (c > 2) 
+		if (c > 2)
 			c = 0;
-		else
+		else 
 			c += 1;
 		return c;
 	}
 	
-	// Add a player to the game
-	public void addPlayer() {
-		if (numOfPlayers < 4) {
-			numOfPlayers++;
-		}
-		else {
-			System.out.println(MAX_CONNECTED);
-		}
-	}
-	
-	// @return Returns number of players in game
-	public int getNumOfPlayers() {
-		return numOfPlayers;
-	}
-
 	public int[] rollDice(){
 		int[] dice = { rand.nextInt(6) +1, rand.nextInt(6) +1 };
 		return dice; // dice implementation
@@ -457,11 +441,10 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 			pos = 0;
 			player.setLost(true);
 			break;
-		
 		// Escalators
 		case 3:
 			pos = 24;
-			break;
+			break;	
 		case 7:
 			pos = 12;
 			break;
@@ -475,21 +458,32 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		
 		// IF OUR POSITION IS OVER 28 CURRENT PLAYER WINS
 		if ( pos > 28) {
-			map[pos].addPlayer();
+			map[29].addPlayer();
 			player.setPosition(29);
-			x = map[pos].getPositionX();
-			y = map[pos].getPositionY();
+			x = map[29].getPositionX();
+			y = map[29].getPositionY();
 		}
 		else {
-		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
-		// Set x and y of player
-		map[pos].addPlayer();
-		player.setPosition(pos);
-		x = map[pos].getPositionX();
-		y = map[pos].getPositionY();
-		}
+			// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
+			// Set x and y of player
+			map[pos].addPlayer();
+			player.setPosition(pos);
+			x = map[pos].getPositionX();
+			y = map[pos].getPositionY();
 		
-	}
-
-
+			switch (map[pos].getPlayers()) {
+				case 2: 
+					y -= 50;
+					break;
+				case 3:
+					y -= 50;
+					x -= 50;
+					break;
+				case 4:
+					x -= 50;
+					break;
+			}
+		
+		}
+}
 }
