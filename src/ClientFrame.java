@@ -16,26 +16,22 @@ import javax.swing.border.LineBorder;
 
 public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, Runnable {
 
-	// Declare Vars
-	private JLabel contentPane;
+	// GUI ELEMENTS
+	private JPanel panel;
+	private JLabel contentPane, playerSprite, playerSprite2, playerSprite3, playerSprite4, lblDi, lblDi_1;
 	private JTextArea outputText;
 	private JScrollPane scrollPane;
-	private boolean myTurn = false;
-	private boolean wait = true;
-	private String host = "127.0.0.1";
-	private int port = 9001;
 	private DataInputStream inputStream; //fromServer
 	private DataOutputStream outputStream; //toServer
-	private boolean waiting = true;
-	private Image img;
-	JButton btnRoll;
-	JLabel lblDi;
-	JLabel playerSprite, playerSprite2, playerSprite3, playerSprite4;
+	private JButton btnRoll;
 	
-	private boolean connected;
-	private JLabel statusIndicator = new JLabel();
-	private int player, myNumber;
-	int numOfPlayers, currentPlayerTurn;
+	// BOOLEAN ELEMENTS
+	private boolean waiting = true;
+	private boolean myTurn = false;
+	
+	// SERVER CONNECTION INFO
+	private String host = "127.0.0.1";
+	private int port = 9001, playerID;
 	
 
 	/**
@@ -59,35 +55,14 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	 * Create the frame.
 	 */
 	public ClientFrame() {
-		// TESTING PLAYER SPRITE IMAGE RESCALING
-		// Player 1
-		ImageIcon plSprite = new ImageIcon("src/123.png"); 
-		Image image = plSprite.getImage(); 
-		Image newimg = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-		plSprite = new ImageIcon(newimg);
-		playerSprite = new JLabel(plSprite);
+		// BEGIN PLAYER SPRITE CREATION
+		playerSprite = new JLabel(rescaleSprite("src/123.png"));
+		playerSprite2 = new JLabel(rescaleSprite("src/124.png"));
+		playerSprite3 = new JLabel(rescaleSprite("src/125.png"));
+		playerSprite4 = new JLabel(rescaleSprite("src/126.png"));
+		// END PLAYER SPRITE CREATION
 		
-		// Player 2
-		ImageIcon plSprite2 = new ImageIcon("src/124.png"); 
-		Image image2 = plSprite2.getImage(); 
-		Image newimg2 = image2.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-		plSprite2 = new ImageIcon(newimg2);
-		playerSprite2 = new JLabel(plSprite2);
-		
-		// Player 3
-		ImageIcon plSprite3 = new ImageIcon("src/125.png"); 
-		Image image3 = plSprite3.getImage(); 
-		Image newimg3 = image3.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-		plSprite3 = new ImageIcon(newimg3);
-		playerSprite3 = new JLabel(plSprite3);
-		
-		// Player 4
-		ImageIcon plSprite4 = new ImageIcon("src/126.png"); 
-		Image image4 = plSprite4.getImage(); 
-		Image newimg4 = image4.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-		plSprite = new ImageIcon(newimg4);
-		playerSprite4 = new JLabel(plSprite4);
-		
+		// CREATE OUR MAIN WINDOW AND BACKGROUND
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1844, 1080);
 		setResizable(false);
@@ -97,29 +72,26 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		setContentPane(contentPane);
 		
 		
-		JPanel panel = new JPanel();
+		// DICE WINDOW
+		panel = new JPanel();
 		panel.setBackground(new Color(18, 148, 203));
 		contentPane.add(panel);
 		panel.setSize(50,80);
 		panel.setLocation(50,900);
+		btnRoll = new JButton("Roll");
+		panel.add(btnRoll);
+		lblDi = new JLabel("0");
+		lblDi_1 = new JLabel("0");
+		panel.add(lblDi_1);
+		panel.add(lblDi);
 		
+		// TEXT AREA
 		outputText = new JTextArea();
+		outputText.setWrapStyleWord(true);
         scrollPane = new JScrollPane(outputText);
         contentPane.add(scrollPane);
         scrollPane.setSize(200,800);
         scrollPane.setLocation(1600,100);
-		
-        statusIndicator.setBorder(new LineBorder(Color.black, 1)); //TODO - implement
-        add(statusIndicator, BorderLayout.NORTH);
-        
-		btnRoll = new JButton("Roll");
-		panel.add(btnRoll);
-		
-		JLabel lblDi = new JLabel("Dice 1");
-		panel.add(lblDi);
-		
-		JLabel lblDi_1 = new JLabel("Dice 2");
-		panel.add(lblDi_1);
 		
 		
 		
@@ -144,27 +116,23 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		playerSprite4.setLocation(400, 813);
 		playerSprite4.setSize(40,40);
 		
-		scrollPane.setVisible(true);
-		outputText.setVisible(true);
-		contentPane.setVisible(true);
+		// DISPLAY OUR GUI
 		setVisible(true);
-		//TODO - Add JTextArea hider/opener
-		//outputText.addComponentListener(new addKeyListener(T) {	
-		//});
+
+		// JBUTTON BTNROLL ACTION LISTENER
 		btnRoll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try { 
 					if(myTurn) {
-						
+						// REQUEST DICE FROM THE SERVER AND DISPLAY THEM ON THE CLIENT
 						outputStream.writeInt(SEND_ROLL_REQUEST);
-						int dii = inputStream.readInt();
-						lblDi.setText(Integer.toString(dii));
-						dii = inputStream.readInt();
-						lblDi_1.setText(Integer.toString(dii));
+						lblDi.setText(Integer.toString(inputStream.readInt()));
+						lblDi_1.setText(Integer.toString(inputStream.readInt()));
 						
+						// RESUME LISTENING FROM THE SERVER
+						// OUR TURN IS OVER
 						waiting = false;
 					}
-						
 					else
 						outputText.append("\n" + WAIT_MESSAGE);
 					
@@ -174,7 +142,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		});
 		
-		contentPane.addMouseListener(new MouseListener() {
+		/*contentPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				int x = e.getX();
 				int y = e.getY();
@@ -205,29 +173,22 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 				
 			}
 
-		});
+		});*/
 		
 	}
 	
-	
-	public void getServerInfo() {
-		// Enter Server IP
-		// Enter Server Port
-		// Check format of IP & Port
-		try{
-			System.out.println("IP: " + host);
-			System.out.println("Port: " + port);
-			System.out.println("Connection: " + connected);
-		} catch(Exception e){
-			System.out.println("Error with getServerInfo()");
-		}
+	// HELPER FUNCTION FOR RESIZING SPRITES
+	public ImageIcon rescaleSprite(String path) {
+		ImageIcon plSprite = new ImageIcon(path); 
+		Image image = plSprite.getImage(); 
+		image = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+		return new ImageIcon(image);
 	}
 	
 	//@param1 Host of server
 	//@param2 Port of server
 	//@return Server connected status
-	//TODO - bool return != necessary
-	public boolean connectToServer() {
+	public void connectToServer() {
 		
 		try {
 			// Create our socket to connect to the server
@@ -237,51 +198,52 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			inputStream = new DataInputStream(socket.getInputStream());
 			outputStream = new DataOutputStream(socket.getOutputStream());
 			
-			connected = true;
-			getServerInfo();
+			// CONNECTED - START GAME LOOP
 			Thread thread = new Thread(this);
 		    thread.start();
-			return true;
 			
 		}
 		catch (Exception e) {
-			connected = false;
-			getServerInfo();
 			System.out.println("Problem with connectToServer()");
-			return false;
 			
 		}	
 	}
 	
 
-	//TODO -need to fix
 	public void run() {
+		try {
+		playerID = inputStream.readInt();
+		}
+		catch (Exception e) {
+			System.out.println(e.toString());
+		}
 		while(true) {
 			try {
-				int currentStatus = inputStream.readInt();
-				System.out.println(currentStatus);
-				switch(currentStatus) {
-				
+				switch(inputStream.readInt()) {
+					
+					// NOT OUR TURN
 					case PLAYER_WAIT:
-						
 						myTurn = false;
 						break;
-						
+					
+					// ALLOW PLAYER TO MOVE
 					case PLAYER_GO:
 						myTurn = true;
 						waitForPlayer();
 						break;
-						
+					
+					// UPDATE GAME BOARD
 					case END_PLAYER_TURN:
-						int player = inputStream.readInt();
-						int x = inputStream.readInt();
-						int y = inputStream.readInt();
-						receiveMove(player, x, y);
+						receiveMove(inputStream.readInt(), inputStream.readInt(), inputStream.readInt());
+						break;
+					
+					// PLAYER HAS WON THE GAME
+					case PLAYER_WON:
+						win(inputStream.readInt());
 						break;
 						
-					case PLAYER_WON:
-						currentStatus = inputStream.readInt();
-						win(currentStatus);
+					case PLAYER_LOST:
+						lost(inputStream.readInt());
 						break;
 				}
 				
@@ -292,14 +254,15 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		}
 	
+	// WAIT FOR PLAYER TO ROLL/ACTION
 	private void waitForPlayer() throws InterruptedException {
 		    while (waiting) {
 		      Thread.sleep(100);
 		    }
-
 		    waiting = true;
 		  }
 
+	// END GAME IF CALLED
 	private void win(int player) {
 		switch (player) {
 			case PLAYER1_WIN:
@@ -315,8 +278,34 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 				outputText.append("PLAYER 4 HAS WON THE GAME!");
 				break;
 		}
+		panel.remove(btnRoll);
+		panel.remove(lblDi_1);
+		lblDi.setText("GAME OVER");
 	}
 	
+	private void lost(int player) {
+		switch (player) {
+		case PLAYER1_LOSE:
+			outputText.append("PLAYER 1 HAS LOST THE GAME!");
+			break;
+		case PLAYER2_LOSE:
+			outputText.append("PLAYER 2 HAS LOST THE GAME!");
+			break;
+		case PLAYER3_LOSE:
+			outputText.append("PLAYER 3 HAS LOST THE GAME!");
+			break;
+		case PLAYER4_LOSE:
+			outputText.append("PLAYER 4 HAS LOST THE GAME!");
+			break;
+	}
+		if (player == playerID) {
+			panel.remove(btnRoll);
+			panel.remove(lblDi_1);
+			lblDi.setText("GAME OVER");
+		}
+	}
+	
+	// UPDATE GAMEBOARD WITH NEW POSITIONS
 	private void receiveMove(int currentPlayer, int x ,int y){
         switch (currentPlayer){
             case 1:
