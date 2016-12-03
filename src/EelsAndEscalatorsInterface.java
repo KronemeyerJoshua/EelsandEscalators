@@ -6,15 +6,8 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER3 = 3;
 	int PLAYER4 = 4;
 	
-	// Player Turns
-	int[] PLAYER_TURN_ORDER = {PLAYER1, PLAYER2, PLAYER3, PLAYER4};
-	
 	// Player Win Identification
 	int PLAYER_WON = 83;
-	int PLAYER1_WIN = 11;
-	int PLAYER2_WIN = 22;
-	int PLAYER3_WIN = 33;
-	int PLAYER4_WIN = 44;
 	
 	// Player Lose Identification
 	int PLAYER_LOST = 84;
