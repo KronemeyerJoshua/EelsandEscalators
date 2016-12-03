@@ -18,7 +18,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 
 	// GUI ELEMENTS
 	private JPanel panel;
-	private JLabel contentPane, playerSprite, playerSprite2, playerSprite3, playerSprite4, lblDi, lblDi_1;
+	private JLabel contentPane, playerSprite, playerSprite2, playerSprite3, playerSprite4, lblDi, lblDi_1, lblStatus;
 	private JTextArea outputText;
 	private JScrollPane scrollPane;
 	private DataInputStream inputStream; //fromServer
@@ -31,7 +31,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	
 	// SERVER CONNECTION INFO
 	private String host = "127.0.0.1";
-	private int port = 9001, playerID;
+	private int port = 9001;
 	
 
 	/**
@@ -76,14 +76,16 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		panel = new JPanel();
 		panel.setBackground(new Color(18, 148, 203));
 		contentPane.add(panel);
-		panel.setSize(50,80);
+		panel.setSize(150,50);
 		panel.setLocation(50,900);
 		btnRoll = new JButton("Roll");
 		panel.add(btnRoll);
 		lblDi = new JLabel("0");
 		lblDi_1 = new JLabel("0");
+		lblStatus = new JLabel("Turn: ");
 		panel.add(lblDi_1);
 		panel.add(lblDi);
+		panel.add(lblStatus);
 		
 		// TEXT AREA
 		outputText = new JTextArea();
@@ -211,6 +213,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	
 
 	public void run() {
+		int playerID = 0, currentPlayer;
 		try {
 		playerID = inputStream.readInt();
 		}
@@ -234,7 +237,9 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 					
 					// UPDATE GAME BOARD
 					case END_PLAYER_TURN:
-						receiveMove(inputStream.readInt(), inputStream.readInt(), inputStream.readInt());
+						currentPlayer = inputStream.readInt();
+						receiveMove(currentPlayer, inputStream.readInt(), inputStream.readInt());
+						updateStatus(playerID, currentPlayer);
 						break;
 					
 					// PLAYER HAS WON THE GAME
@@ -243,7 +248,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 						break;
 						
 					case PLAYER_LOST:
-						lost(inputStream.readInt());
+						lost(inputStream.readInt(), playerID);
 						break;
 				}
 				
@@ -262,6 +267,27 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		    waiting = true;
 		  }
 
+	private void updateStatus(int myID, int current) {
+		if (myID == current) {
+			lblStatus.setText("It's MY turn.");
+		}
+		else {
+		switch (current+1) {
+			case 1:
+				lblStatus.setText("It's PLAYER1's turn.");
+				break;
+			case 2:
+				lblStatus.setText("It's PLAYER2's turn.");
+				break;
+			case 3:
+				lblStatus.setText("It's PLAYER3's turn.");
+				break;
+			case 4:
+				lblStatus.setText("It's PLAYER4's turn.");
+				break;
+		}
+		}
+	}
 	// END GAME IF CALLED
 	private void win(int player) {
 		switch (player) {
@@ -283,7 +309,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		lblDi.setText("GAME OVER");
 	}
 	
-	private void lost(int player) {
+	private void lost(int player, int playerID) {
 		switch (player) {
 		case PLAYER1_LOSE:
 			outputText.append("PLAYER 1 HAS LOST THE GAME!\n");
