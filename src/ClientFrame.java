@@ -247,7 +247,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 					// UPDATE GAME BOARD
 					case END_PLAYER_TURN:
 						currentPlayer = inputStream.readInt();
-						receiveMove(currentPlayer, inputStream.readInt(), inputStream.readInt());
+						receiveMove(currentPlayer, inputStream.readInt(), inputStream.readInt(), inputStream.readInt(), inputStream.readInt());
 						updateStatus(playerID, currentPlayer);
 						break;
 					
@@ -297,18 +297,34 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	}
 	
 	// UPDATE GAMEBOARD WITH NEW POSITIONS
-	private void receiveMove(int currentPlayer, int x ,int y){
+	private void receiveMove(int currentPlayer, int x, int y, int eel, int esc){
         switch (currentPlayer){
             case 1:
+            	if (eel == 1)
+            		outputText.append("Player " + currentPlayer + " has slided down an eel!\n");
+            	if (esc == 1)
+            		outputText.append("Player " + currentPlayer + " has taken an escalator up!\n");
             	playerSprite.setLocation(x, y); 
                 break;
             case 2:
+            	if (eel == 1)
+            		outputText.append("Player " + currentPlayer + " has slided down an eel!\n");
+            	if (esc == 1)
+            		outputText.append("Player " + currentPlayer + " has taken an escalator up!\n");
             	playerSprite2.setLocation(x, y);
                 break;
             case 3:
+            	if (eel == 1)
+            		outputText.append("Player " + currentPlayer + " has slided down an eel!\n");
+            	if (esc == 1)
+            		outputText.append("Player " + currentPlayer + " has taken an escalator up!\n");
             	playerSprite3.setLocation(x, y); 
                 break;
             case 4:
+            	if (eel == 1)
+            		outputText.append("Player " + currentPlayer + " has slided down an eel!\n");
+            	if (esc == 1)
+            		outputText.append("Player " + currentPlayer + " has taken an escalator up!\n");
             	playerSprite4.setLocation(x, y); 
                 break;
                 
