@@ -76,33 +76,28 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 			outputText.append("\n" + new Date() + ": Waiting for players...\n");
 			
 			// WAIT FOR CONNECTION OF PLAYERS, ACCEPT 4 PLAYERS THEN START
-			// DEBUGGING NOTE: ONLY 1 PLAYER IS ACTIVE TO FACILITATE TESTING
 			Socket player1 = socket.accept();
 			outputText.append("\nPlayer 1 now connecting from " + player1.getInetAddress().getHostAddress());
 			new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
-			//Notify that player is player 1
 			
-			/*
+			
 			Socket player2 = socket.accept();
 			outputText.append("\nPlayer 2 now connecting from " + player2.getInetAddress().getHostAddress());
-			//Notify that player is player 2
 			new DataOutputStream(player2.getOutputStream()).writeInt(PLAYER2);
 			
 			Socket player3 = socket.accept();
 			outputText.append("\nPlayer 3 now connecting from " + player3.getInetAddress().getHostAddress());
-			//Notify that player is player 3
 			new DataOutputStream(player3.getOutputStream()).writeInt(PLAYER3);
 			
 			Socket player4 = socket.accept();
 			outputText.append("\nPlayer 4 now connecting from " + player4.getInetAddress().getHostAddress());
-			//Notify that player is player 4
 			new DataOutputStream(player4.getOutputStream()).writeInt(PLAYER4);
-			*/
+			
 			
 			// ALL PLAYERS HAVE BEEN CONNECTED
 			// BEGIN OUR SERVER LOGIC LOOP
 			outputText.append("\n" + MAX_CONNECTED);
-			GameSession session = new GameSession(player1); //TODO
+			GameSession session = new GameSession(player1, player2, player3, player4);
 			new Thread(session).start();
 		}
 		catch (Exception e) {
@@ -139,49 +134,18 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	private DataInputStream currentIn;
 	private DataOutputStream currentOut;
 	
-	// BEGIN CONSTRUCTORS
-	// @param1 Our socket connection to player1 client
-	public GameSession(Socket player1Socket) { 
-		// Initialize our player connections before game start
-		this.player1Socket = player1Socket;
-		player1 = new Player(0);
-		player2 = new Player(0);
-		player3 = new Player(0);
-		player4 = new Player(0);
-		genMapDefault(); //generate map
-		
-	}
-	
-	// @param1 Our socket connection to player1 client
-	// @param2 Our socket connection to player2 client
-	public GameSession(Socket player1Socket, Socket player2Socket) {
-		
-		// Initialize our player connections before game start
-		this.player1Socket = player1Socket;
-		this.player2Socket = player2Socket;
-		
-		genMapDefault(); //generate map
-		
-	}
-	
-	// @param1 Our socket connection to player1 client
-	// @param2 Our socket connection to player2 client
-	// @param3 Our socket connection to player3 client
-	public GameSession(Socket player1Socket, Socket player2Socket, Socket player3Socket) {
-		
-		// Initialize our player connections before game start
-		this.player1Socket = player1Socket;
-		this.player2Socket = player2Socket;
-		this.player3Socket = player3Socket;
-		
-		genMapDefault(); //generate map
-	}
 	
 	// @param1 Our socket connection to player1 client
 	// @param2 Our socket connection to player2 client
 	// @param3 Our socket connection to player3 client
 	// @param4 Our socket connection to player4 client
 	public GameSession(Socket player1Socket, Socket player2Socket, Socket player3Socket, Socket player4Socket) {
+		
+		// Players
+		player1 = new Player();
+		player2 = new Player();
+		player3 = new Player();
+		player4 = new Player();
 		
 		// Initialize our player connections before game start
 		this.player1Socket = player1Socket;
@@ -200,28 +164,23 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		try {
 			currentPlayerTurn = 0;
 			// Initialize our in and out streams to send/receive from our player clients
-			// DEBUGGING NOTE: TODO PLAYER IN/OUT STREAMS ARE COMMENTED OUT FOR TESTING PURPOSES
 			DataInputStream fromP1 = new DataInputStream(player1Socket.getInputStream());
-			/*
 			DataInputStream fromP2 = new DataInputStream(player2Socket.getInputStream());
 			DataInputStream fromP3 = new DataInputStream(player3Socket.getInputStream());
 			DataInputStream fromP4 = new DataInputStream(player4Socket.getInputStream());
-			*/
+			
 			
 			
 			DataOutputStream toP1 = new DataOutputStream(player1Socket.getOutputStream());
-			/*
 			DataOutputStream toP2 = new DataOutputStream(player2Socket.getOutputStream());
 			DataOutputStream toP3 = new DataOutputStream(player3Socket.getOutputStream());
 			DataOutputStream toP4 = new DataOutputStream(player4Socket.getOutputStream());
-			*/
+			
 			
 			toP1.writeInt(PLAYER_WAIT);
-			/*
 			toP2.writeInt(PLAYER_WAIT);
 			toP3.writeInt(PLAYER_WAIT);
 			toP4.writeInt(PLAYER_WAIT);
-			*/
 			
 			// SERVER MAIN LOGIC LOOP
 			while (true) {
@@ -236,20 +195,20 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 						break;
 						
 					case PLAYER2:
-						currentIn = fromP1;
-						currentOut = toP1;
+						currentIn = fromP2;
+						currentOut = toP2;
 						currentPlayer = player2;
 						break;
 						
 					case PLAYER3:
-						currentIn = fromP1;
-						currentOut = toP1;
+						currentIn = fromP3;
+						currentOut = toP3;
 						currentPlayer = player3;
 						break;
 						
 					case PLAYER4:
-						currentIn = fromP1;
-						currentOut = toP1;
+						currentIn = fromP4;
+						currentOut = toP4;
 						currentPlayer = player4;
 						break;
 				}
@@ -268,22 +227,22 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 							
 							// TODO 
 							sendMove(toP1, x, y, currentPlayerTurn, currentPlayer);
-							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
-							sendMove(toP3, x, y, (currentPlayerTurn+2));
-							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
+							sendMove(toP2, x, y, currentPlayerTurn, currentPlayer);
+							sendMove(toP3, x, y, currentPlayerTurn, currentPlayer);
+							sendMove(toP4, x, y, currentPlayerTurn, currentPlayer);
 							
 							if (currentPlayer.getPosition() > 28) {
 								toP1.writeInt(PLAYER_WON);
-								/*toP2.writeInt(PLAYER_WON);
+								toP2.writeInt(PLAYER_WON);
 								toP3.writeInt(PLAYER_WON);
-								toP4.writeInt(PLAYER_WON);*/
+								toP4.writeInt(PLAYER_WON);
 							}
 								
 							if (currentPlayer.getLost()) {
 								toP1.writeInt(PLAYER_LOST);
-								/*toP2.writeInt(PLAYER_LOST);
+								toP2.writeInt(PLAYER_LOST);
 								toP3.writeInt(PLAYER_LOST);
-								toP4.writeInt(PLAYER_LOST);*/
+								toP4.writeInt(PLAYER_LOST);
 							}
 							
 						break;
