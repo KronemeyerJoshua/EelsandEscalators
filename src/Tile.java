@@ -32,6 +32,10 @@ public class Tile {
 		players--;
 	}
 	
+	public int getPlayers() {
+		return players;
+	}
+	
 	
 	public void setPositionX(int posX){
 		positionX = posX;
