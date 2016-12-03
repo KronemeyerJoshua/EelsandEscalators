@@ -55,18 +55,26 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	 * Create the frame.
 	 */
 	public ClientFrame() {
+		// THESE URLS TELL JAVA THAT THESE ARE REQUIRED RESOURCES
+		// SO THAT THEY MAY BE PACKED INTO A JAR CORRECTLY
+		URL sprite1 = ClientFrame.class.getResource("/resources/123.png");
+		URL sprite2 = ClientFrame.class.getResource("/resources/124.png");
+		URL sprite3 = ClientFrame.class.getResource("/resources/125.png");
+		URL sprite4 = ClientFrame.class.getResource("/resources/126.png");
+		URL background = ClientFrame.class.getResource("/resources/EelsAndEscalatorsYouLose.jpg");
+		
 		// BEGIN PLAYER SPRITE CREATION
-		playerSprite = new JLabel(rescaleSprite("src/resources/123.png"));
-		playerSprite2 = new JLabel(rescaleSprite("src/resources/124.png"));
-		playerSprite3 = new JLabel(rescaleSprite("src/resources/125.png"));
-		playerSprite4 = new JLabel(rescaleSprite("src/resources/126.png"));
+		playerSprite = new JLabel(rescaleSprite(sprite1));
+		playerSprite2 = new JLabel(rescaleSprite(sprite2));
+		playerSprite3 = new JLabel(rescaleSprite(sprite3));
+		playerSprite4 = new JLabel(rescaleSprite(sprite4));
 		// END PLAYER SPRITE CREATION
 		
 		// CREATE OUR MAIN WINDOW AND BACKGROUND
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1844, 1080);
 		setResizable(false);
-		contentPane = new JLabel(new ImageIcon("src/resources/EelsAndEscalatorsYouLose.jpg"));
+		contentPane = new JLabel(new ImageIcon(background));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
@@ -155,7 +163,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	}
 	
 	// HELPER FUNCTION FOR RESIZING SPRITES
-	public ImageIcon rescaleSprite(String path) {
+	public ImageIcon rescaleSprite(URL path) {
 		ImageIcon plSprite = new ImageIcon(path); 
 		Image image = plSprite.getImage(); 
 		image = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
