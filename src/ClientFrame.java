@@ -266,16 +266,16 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	private void win(int player) {
 		switch (player) {
 			case PLAYER1_WIN:
-				outputText.append("PLAYER 1 HAS WON THE GAME!");
+				outputText.append("PLAYER 1 HAS WON THE GAME!\n");
 				break;
 			case PLAYER2_WIN:
-				outputText.append("PLAYER 2 HAS WON THE GAME!");
+				outputText.append("PLAYER 2 HAS WON THE GAME!\n");
 				break;
 			case PLAYER3_WIN:
-				outputText.append("PLAYER 3 HAS WON THE GAME!");
+				outputText.append("PLAYER 3 HAS WON THE GAME!\n");
 				break;
 			case PLAYER4_WIN:
-				outputText.append("PLAYER 4 HAS WON THE GAME!");
+				outputText.append("PLAYER 4 HAS WON THE GAME!\n");
 				break;
 		}
 		panel.remove(btnRoll);
@@ -286,16 +286,16 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	private void lost(int player) {
 		switch (player) {
 		case PLAYER1_LOSE:
-			outputText.append("PLAYER 1 HAS LOST THE GAME!");
+			outputText.append("PLAYER 1 HAS LOST THE GAME!\n");
 			break;
 		case PLAYER2_LOSE:
-			outputText.append("PLAYER 2 HAS LOST THE GAME!");
+			outputText.append("PLAYER 2 HAS LOST THE GAME!\n");
 			break;
 		case PLAYER3_LOSE:
-			outputText.append("PLAYER 3 HAS LOST THE GAME!");
+			outputText.append("PLAYER 3 HAS LOST THE GAME!\n");
 			break;
 		case PLAYER4_LOSE:
-			outputText.append("PLAYER 4 HAS LOST THE GAME!");
+			outputText.append("PLAYER 4 HAS LOST THE GAME!\n");
 			break;
 	}
 		if (player == playerID) {
