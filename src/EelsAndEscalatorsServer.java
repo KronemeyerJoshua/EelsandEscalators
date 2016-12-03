@@ -79,6 +79,7 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 			// DEBUGGING NOTE: ONLY 1 PLAYER IS ACTIVE TO FACILITATE TESTING
 			Socket player1 = socket.accept();
 			outputText.append("\nPlayer 1 now connecting from " + player1.getInetAddress().getHostAddress());
+			new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
 			//Notify that player is player 1
 			
 			/*
@@ -255,8 +256,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 				}
 				
 				// TELL THE CLIENT THAT IT IS THIS PLAYERS TURN
-				currentOut.writeInt(PLAYER_GO);
-				
+				if (currentPlayer.getLost() == false) {
+					currentOut.writeInt(PLAYER_GO);	
 				// RECEIVE THE REQUEST FROM THE CLIENT
 					switch (currentIn.readInt()) {
 						case SEND_ROLL_REQUEST:
@@ -267,11 +268,10 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 							currentOut.writeInt(PLAYER_WAIT);
 							
 							if (currentPlayer.getPosition() > 28) {
-								System.out.println("PLAYER WON");
 								toP1.writeInt(PLAYER_WON);
-								/*toP2.writeInt(PLAYER1_WIN);
-								toP3.writeInt(PLAYER1_WIN);
-								toP4.writeInt(PLAYER1_WIN);*/
+								/*toP2.writeInt(PLAYER_WON);
+								toP3.writeInt(PLAYER_WON);
+								toP4.writeInt(PLAYER_WON);*/
 								switch (currentPlayerTurn+1) {
 									case PLAYER1:
 										toP1.writeInt(PLAYER1_WIN);
@@ -298,17 +298,49 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 										toP4.writeInt(PLAYER4_WIN);*/
 										break;
 								}
-								
 							}
-							else
-								sendMove(toP1, x, y, (currentPlayerTurn+1));
-								System.out.println("Player: " + currentPlayerTurn + " Position: " + currentPlayer.getPosition());
+								
+							if (currentPlayer.getLost()) {
+								toP1.writeInt(PLAYER_LOST);
+								/*toP2.writeInt(PLAYER_LOST);
+								toP3.writeInt(PLAYER_LOST);
+								toP4.writeInt(PLAYER_LOST);*/
+								switch (currentPlayerTurn+1) {
+								case PLAYER1:
+									toP1.writeInt(PLAYER1_LOSE);
+									/*toP2.writeInt(PLAYER1_LOSE);
+									toP3.writeInt(PLAYER1_LOSE);
+									toP4.writeInt(PLAYER1_LOSE);*/
+									break;
+								case PLAYER2:
+									toP1.writeInt(PLAYER2_LOSE);
+									/*toP2.writeInt(PLAYER2_LOSE);
+									toP3.writeInt(PLAYER2_LOSE);
+									toP4.writeInt(PLAYER2_LOSE);*/
+									break;
+								case PLAYER3:
+									toP1.writeInt(PLAYER3_LOSE);
+									/*toP2.writeInt(PLAYER3_LOSE);
+									toP3.writeInt(PLAYER3_LOSE);
+									toP4.writeInt(PLAYER3_LOSE);*/
+									break;
+								case PLAYER4:
+									toP1.writeInt(PLAYER4_LOSE);
+									/*toP2.writeInt(PLAYER4_LOSE);
+									toP3.writeInt(PLAYER4_LOSE);
+									toP4.writeInt(PLAYER4_LOSE);*/
+									break;
+							}
+							}
+							
+							sendMove(toP1, x, y, (currentPlayerTurn+1));
 							// TODO 
 							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
 							sendMove(toP3, x, y, (currentPlayerTurn+2));
 							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
 						break;
 					}
+				}
 
 				}
 			}
@@ -405,11 +437,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		
 	}
 	
-	public void genMapRandom(){ //generates a random map - TODO
-		
-	}
-	
-	//TODO - implement into server function
+	// Moves players to the appropriate tile
 	public void movePlayer(Player player) { //used after the dice has been rolled
 		int pos = player.getPosition();
 		map[pos].removePlayer(); //remove player from tile
@@ -427,34 +455,34 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 			break;
 		case 16:
 			pos = 0;
+			player.setLost(true);
 			break;
 		
 		// Escalators
 		case 3:
 			pos = 24;
 			break;
-		
 		case 7:
 			pos = 12;
 			break;
-			
 		case 18:
 			pos = 20;
 			break;
-			
 		default:
 			pos += totalDice;
 			break;
-			
 		}
 		
-		if ( pos > 29) {
-			player.setPosition(30);
+		// IF OUR POSITION IS OVER 28 CURRENT PLAYER WINS
+		if ( pos > 28) {
+			map[pos].addPlayer();
+			player.setPosition(29);
+			x = map[pos].getPositionX();
+			y = map[pos].getPositionY();
 		}
 		else {
 		// Transfer to other tiles if Eel or Escalator -- already transfers to other pieces
 		// Set x and y of player
-		System.out.println(pos);
 		map[pos].addPlayer();
 		player.setPosition(pos);
 		x = map[pos].getPositionX();
@@ -463,100 +491,5 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		
 	}
 
-
-public class Tile {
-
-	private int players;
-	private int positionX = 0; //tile position
-	private int positionY = 0;	
-	private boolean isStart;
-	private boolean isFinish;
-	private boolean isLose;
-	
-	
-	public Tile(){
-		players = 0;
-		
-	}
-	
-	public Tile(int posX, int posY){
-		this();
-		positionX = posX;
-		positionY = posY;
-	}
-	
-	public void addPlayer (){ 
-		players++;
-	}
-	
-	public void removePlayer(){ 
-		players--;
-	}
-	
-	
-	public void setPositionX(int posX){
-		positionX = posX;
-	}
-	
-	public void setPositionY(int posY){
-		positionY = posY;
-	}
-	
-	public void setPosition(int posX, int posY){
-		positionX = posX;
-		positionY = posY;
-	}
-	
-	public int getPositionX(){
-		return positionX;
-	}
-		
-	public int getPositionY(){
-		return positionY;
-	}
-	
-	public boolean getStart() {
-		return isStart;
-	}
-	
-	public void setStart() {
-		isStart = true;
-	}
-
-	public boolean getLose() {
-		return isLose;
-	}
-	
-	public void setLose() {
-		isLose = true;
-	}
-	public boolean getWin() {
-		return isFinish;
-	}
-	
-	public void setWin() {
-		isFinish = true;
-	}
-	
-}
-
-public class Player {
-	private int tilePosition;
-	Player(int tile) {
-		tilePosition = tile;
-	}
-	
-	Player() {
-		tilePosition = 0;
-	}
-	
-	public int getPosition() {
-		return tilePosition;
-	}
-	
-	public void setPosition(int pos) {
-		tilePosition = pos;
-	}
-}
 
 }
