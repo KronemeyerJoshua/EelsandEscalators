@@ -120,7 +120,6 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	// Global Vars
 	int numOfPlayers, currentPlayerTurn, x, y;
-	int[] playerCharacterChoice;
 	int[] dice;
 	Random rand = new Random();
 	
@@ -199,7 +198,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	public void run() {
 		try {
-			currentPlayerTurn = -1;
+			currentPlayerTurn = 0;
 			// Initialize our in and out streams to send/receive from our player clients
 			// DEBUGGING NOTE: TODO PLAYER IN/OUT STREAMS ARE COMMENTED OUT FOR TESTING PURPOSES
 			DataInputStream fromP1 = new DataInputStream(player1Socket.getInputStream());
@@ -229,7 +228,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 				// DEBUGGING NOTE: TODO ALL TURNS ARE PLAYER1 FOR TESTING PURPOSES
 				// BELOW DECIDES WHICH PLAYER IS THE CURRENT PLAYER
 				currentPlayerTurn = whosNext(currentPlayerTurn);
-				switch(PLAYER_TURN_ORDER[currentPlayerTurn]) {
+				switch(currentPlayerTurn) {
 					case PLAYER1:
 						currentIn = fromP1;
 						currentOut = toP1;
@@ -267,37 +266,17 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 							currentOut.writeInt(dice[1]);
 							currentOut.writeInt(PLAYER_WAIT);
 							
+							// TODO 
+							sendMove(toP1, x, y, (currentPlayerTurn));
+							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
+							sendMove(toP3, x, y, (currentPlayerTurn+2));
+							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
+							
 							if (currentPlayer.getPosition() > 28) {
 								toP1.writeInt(PLAYER_WON);
 								/*toP2.writeInt(PLAYER_WON);
 								toP3.writeInt(PLAYER_WON);
 								toP4.writeInt(PLAYER_WON);*/
-								switch (currentPlayerTurn+1) {
-									case PLAYER1:
-										toP1.writeInt(PLAYER1_WIN);
-										/*toP2.writeInt(PLAYER1_WIN);
-										toP3.writeInt(PLAYER1_WIN);
-										toP4.writeInt(PLAYER1_WIN);*/
-										break;
-									case PLAYER2:
-										toP1.writeInt(PLAYER2_WIN);
-										/*toP2.writeInt(PLAYER2_WIN);
-										toP3.writeInt(PLAYER2_WIN);
-										toP4.writeInt(PLAYER2_WIN);*/
-										break;
-									case PLAYER3:
-										toP1.writeInt(PLAYER3_WIN);
-										/*toP2.writeInt(PLAYER3_WIN);
-										toP3.writeInt(PLAYER3_WIN);
-										toP4.writeInt(PLAYER3_WIN);*/
-										break;
-									case PLAYER4:
-										toP1.writeInt(PLAYER4_WIN);
-										/*toP2.writeInt(PLAYER4_WIN);
-										toP3.writeInt(PLAYER4_WIN);
-										toP4.writeInt(PLAYER4_WIN);*/
-										break;
-								}
 							}
 								
 							if (currentPlayer.getLost()) {
@@ -305,39 +284,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 								/*toP2.writeInt(PLAYER_LOST);
 								toP3.writeInt(PLAYER_LOST);
 								toP4.writeInt(PLAYER_LOST);*/
-								switch (currentPlayerTurn+1) {
-								case PLAYER1:
-									toP1.writeInt(PLAYER1_LOSE);
-									/*toP2.writeInt(PLAYER1_LOSE);
-									toP3.writeInt(PLAYER1_LOSE);
-									toP4.writeInt(PLAYER1_LOSE);*/
-									break;
-								case PLAYER2:
-									toP1.writeInt(PLAYER2_LOSE);
-									/*toP2.writeInt(PLAYER2_LOSE);
-									toP3.writeInt(PLAYER2_LOSE);
-									toP4.writeInt(PLAYER2_LOSE);*/
-									break;
-								case PLAYER3:
-									toP1.writeInt(PLAYER3_LOSE);
-									/*toP2.writeInt(PLAYER3_LOSE);
-									toP3.writeInt(PLAYER3_LOSE);
-									toP4.writeInt(PLAYER3_LOSE);*/
-									break;
-								case PLAYER4:
-									toP1.writeInt(PLAYER4_LOSE);
-									/*toP2.writeInt(PLAYER4_LOSE);
-									toP3.writeInt(PLAYER4_LOSE);
-									toP4.writeInt(PLAYER4_LOSE);*/
-									break;
-							}
 							}
 							
-							sendMove(toP1, x, y, (currentPlayerTurn+1));
-							// TODO 
-							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
-							sendMove(toP3, x, y, (currentPlayerTurn+2));
-							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
 						break;
 					}
 				}
@@ -358,8 +306,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	
 	private int whosNext(int c) {
-		if (c > 2)
-			c = 0;
+		if (c > 3)
+			c = 1;
 		else 
 			c += 1;
 		return c;
@@ -385,7 +333,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		// Set Positions
 		// y = 0
 		map[0].setPosition(424,775);
-		map[1].setPosition(1434,775); // EEL HEAD R1C1
+		map[1].setPosition(547,775); // EEL HEAD R1C1
 		map[2].setPosition(658,775);
 		map[3].setPosition(835,268); //ESCALATOR BOTTOM R1C3
 		map[4].setPosition(872,775);
@@ -393,7 +341,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		map[6].setPosition(1096,775);
 		map[7].setPosition(1184,507); // ESCALATOR BOTTOM R1C7
 		map[8].setPosition(1308,775);
-		map[9].setPosition(547,775); // EEL END R1C9
+		map[9].setPosition(1434,775); // EEL END R1C9
 		
 		// y = 1
 		map[10].setPosition(1420,507); 
@@ -423,6 +371,8 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	// Moves players to the appropriate tile
 	public void movePlayer(Player player) { //used after the dice has been rolled
+		player.setEel(false);
+		player.setEsc(false);
 		int pos = player.getPosition();
 		map[pos].removePlayer(); //remove player from tile
 		int totalDice = dice[0] + dice[1];
@@ -430,12 +380,15 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		// Eels
 		case 1:
 			pos = 9;
+			player.setEel(true);
 			break;
 		case 27:
 			pos = 5;
+			player.setEel(true);
 			break;
 		case 19:
 			pos = 22;
+			player.setEel(true);
 			break;
 		case 16:
 			pos = 0;
@@ -444,12 +397,15 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		// Escalators
 		case 3:
 			pos = 24;
+			player.setEsc(true);
 			break;	
 		case 7:
 			pos = 12;
+			player.setEsc(true);
 			break;
 		case 18:
 			pos = 20;
+			player.setEsc(true);
 			break;
 		default:
 			pos += totalDice;
