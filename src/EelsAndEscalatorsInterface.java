@@ -17,6 +17,7 @@ public interface EelsAndEscalatorsInterface {
 	int PLAYER4_WIN = 44;
 	
 	// Player Lose Identification
+	int PLAYER_LOST = 84;
 	int PLAYER1_LOSE = 10;
 	int PLAYER2_LOSE = 20;
 	int PLAYER3_LOSE = 30;
@@ -26,7 +27,6 @@ public interface EelsAndEscalatorsInterface {
 	int SEND_ROLL_REQUEST = 99;
 	int PLAYER_WAIT = 12;
 	int PLAYER_GO = 13;
-	int RECEIVE_ROLL = 14;
 	int END_PLAYER_TURN = 17;
 	
 	// Any string constants should be put below this line
