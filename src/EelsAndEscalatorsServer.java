@@ -119,7 +119,7 @@ public class EelsAndEscalatorsServer extends JFrame implements EelsAndEscalators
 class GameSession implements Runnable, EelsAndEscalatorsInterface {
 	
 	// Global Vars
-	int numOfPlayers, currentPlayerTurn, x, y;
+	int currentPlayerTurn, x, y;
 	int[] dice;
 	Random rand = new Random();
 	
@@ -267,7 +267,7 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 							currentOut.writeInt(PLAYER_WAIT);
 							
 							// TODO 
-							sendMove(toP1, x, y, (currentPlayerTurn));
+							sendMove(toP1, x, y, currentPlayerTurn, currentPlayer);
 							/*sendMove(toP2, x, y, (currentPlayerTurn+2));
 							sendMove(toP3, x, y, (currentPlayerTurn+2));
 							sendMove(toP4, x, y, (currentPlayerTurn+2));*/
@@ -297,11 +297,13 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		// END SERVER MAIN LOGIC LOOP
 	}
 	
-	private void sendMove(DataOutputStream out, int x, int y, int playerTurn) throws IOException{
+	private void sendMove(DataOutputStream out, int x, int y, int playerTurn, Player player) throws IOException{
 		out.writeInt(END_PLAYER_TURN);
 		out.writeInt(playerTurn);
 		out.writeInt(x);
 		out.writeInt(y);
+		out.writeInt( (player.getEel() ? 1 : 0) );
+		out.writeInt( (player.getEsc() ? 1 : 0) );
 	}
 	
 	
