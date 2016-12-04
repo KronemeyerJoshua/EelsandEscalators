@@ -73,7 +73,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		// CREATE OUR MAIN WINDOW AND BACKGROUND
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1844, 1080);
-		setResizable(false);
+		setResizable(true);
 		contentPane = new JLabel(new ImageIcon(background));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
