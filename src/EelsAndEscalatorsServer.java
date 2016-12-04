@@ -293,40 +293,40 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		
 		// Set Positions
 		// y = 0
-		map[0].setPosition(424,775);
-		map[1].setPosition(547,775); // EEL HEAD R1C1
-		map[2].setPosition(658,775);
-		map[3].setPosition(835,268); //ESCALATOR BOTTOM R1C3
-		map[4].setPosition(872,775);
-		map[5].setPosition(982,775); // EEL END R1C5
-		map[6].setPosition(1096,775);
-		map[7].setPosition(1184,507); // ESCALATOR BOTTOM R1C7
-		map[8].setPosition(1308,775);
-		map[9].setPosition(1434,775); // EEL END R1C9
+		map[0].setPosition(185,435);
+		map[1].setPosition(240,435); // EEL HEAD R1C1
+		map[2].setPosition(285,435);
+		map[3].setPosition(333,435); //ESCALATOR BOTTOM R1C3
+		map[4].setPosition(380,435);
+		map[5].setPosition(432,435); // EEL END R1C5
+		map[6].setPosition(480,435);
+		map[7].setPosition(523,435); // ESCALATOR BOTTOM R1C7
+		map[8].setPosition(572,435);
+		map[9].setPosition(623,435); // EEL END R1C9
 		
 		// y = 1
-		map[10].setPosition(1420,507); 
-		map[11].setPosition(1292,507); 
-		map[12].setPosition(1179,507); // ESCALATOR TOP R2C7
-		map[13].setPosition(1080,507); 
-		map[14].setPosition(964,507);
-		map[15].setPosition(859,507);
-		map[16].setPosition(749,507); // EEL END R2C3
-		map[17].setPosition(628,507); 
-		map[18].setPosition(514,507); // ESCALATOR BOTOM R2C8
-		map[19].setPosition(395,507); // EEL HEAD R2C9
+		map[10].setPosition(621,289); 
+		map[11].setPosition(563,289); 
+		map[12].setPosition(514,289); // ESCALATOR TOP R2C7
+		map[13].setPosition(470,289); 
+		map[14].setPosition(417,289);
+		map[15].setPosition(374,289);
+		map[16].setPosition(327,289); // EEL END R2C3
+		map[17].setPosition(275,289); 
+		map[18].setPosition(222,289); // ESCALATOR BOTOM R2C8
+		map[19].setPosition(173,289); // EEL HEAD R2C9
 		
 		// y = 2
-		map[20].setPosition(380,268); // ESCALATOR TOP R3C0
-		map[21].setPosition(510,268);
-		map[22].setPosition(616,268); // EEL END R3C2
-		map[23].setPosition(734,268);
-		map[24].setPosition(836,268); // ESCALATOR TOP R3C4
-		map[25].setPosition(949,268);
-		map[26].setPosition(1064,268);
-		map[27].setPosition(982,775); // EEL HEAD R3C7
-		map[28].setPosition(1275,268);
-		map[29].setPosition(1396,268);
+		map[20].setPosition(175,160); // ESCALATOR TOP R3C0
+		map[21].setPosition(220,160);
+		map[22].setPosition(268,160); // EEL END R3C2
+		map[23].setPosition(315,160);
+		map[24].setPosition(365,160); // ESCALATOR TOP R3C4
+		map[25].setPosition(410,160);
+		map[26].setPosition(460,160);
+		map[27].setPosition(500,160); // EEL HEAD R3C7
+		map[28].setPosition(554,160);
+		map[29].setPosition(594,160);
 		
 	}
 	
@@ -390,14 +390,14 @@ class GameSession implements Runnable, EelsAndEscalatorsInterface {
 		
 			switch (map[pos].getPlayers()) {
 				case 2: 
-					y -= 50;
+					y -= 20;
 					break;
 				case 3:
-					y -= 50;
-					x -= 50;
+					y -= 20;
+					x -= 20;
 					break;
 				case 4:
-					x -= 50;
+					x -= 20;
 					break;
 			}
 		

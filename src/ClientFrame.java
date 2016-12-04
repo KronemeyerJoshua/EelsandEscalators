@@ -64,17 +64,17 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		URL background = ClientFrame.class.getResource("/resources/EelsAndEscalatorsYouLose.jpg");
 		
 		// BEGIN PLAYER SPRITE CREATION
-		playerSprite = new JLabel(rescaleSprite(sprite1));
-		playerSprite2 = new JLabel(rescaleSprite(sprite2));
-		playerSprite3 = new JLabel(rescaleSprite(sprite3));
-		playerSprite4 = new JLabel(rescaleSprite(sprite4));
+		playerSprite = new JLabel(rescaleSprite(sprite1, 20, 20));
+		playerSprite2 = new JLabel(rescaleSprite(sprite2, 20, 20));
+		playerSprite3 = new JLabel(rescaleSprite(sprite3, 20, 20));
+		playerSprite4 = new JLabel(rescaleSprite(sprite4, 20, 20));
 		// END PLAYER SPRITE CREATION
 		
 		// CREATE OUR MAIN WINDOW AND BACKGROUND
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1844, 1080);
+		setBounds(100, 100, 800, 600);
 		setResizable(false);
-		contentPane = new JLabel(new ImageIcon(background));
+		contentPane = new JLabel(rescaleSprite(background, 800, 600));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
@@ -85,7 +85,7 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		panel.setBackground(new Color(18, 148, 203));
 		contentPane.add(panel);
 		panel.setSize(150,50);
-		panel.setLocation(50,900);
+		panel.setLocation(20,500);
 		btnRoll = new JButton("Roll");
 		panel.add(btnRoll);
 		lblDi = new JLabel("0");
@@ -101,31 +101,31 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 		outputText.setLineWrap(true);
         scrollPane = new JScrollPane(outputText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(scrollPane);
-        scrollPane.setSize(300,800);
-        scrollPane.setLocation(1500,100);
+        scrollPane.setSize(120,300);
+        scrollPane.setLocation(650,100);
 		
 		
 		
 		// ADD PLAYER SPRITE
 		// Player 1
 		contentPane.add(playerSprite);
-		playerSprite.setLocation(400, 687);
-		playerSprite.setSize(40,40);
+		playerSprite.setLocation(180, 380);
+		playerSprite.setSize(20,20);
 		
 		// Player 2
 		contentPane.add(playerSprite2);
-		playerSprite2.setLocation(400, 730);
-		playerSprite2.setSize(40,40);
+		playerSprite2.setLocation(180, 400);
+		playerSprite2.setSize(20,20);
 		
 		// Player 3
 		contentPane.add(playerSprite3);
-		playerSprite3.setLocation(400, 772);
-		playerSprite3.setSize(40,40);
+		playerSprite3.setLocation(180, 420);
+		playerSprite3.setSize(20,20);
 		
 		// Player 4
 		contentPane.add(playerSprite4);
-		playerSprite4.setLocation(400, 813);
-		playerSprite4.setSize(40,40);
+		playerSprite4.setLocation(180, 440);
+		playerSprite4.setSize(20,20);
 		
 		// DISPLAY OUR GUI
 		setVisible(true);
@@ -153,6 +153,39 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 			}
 		});
 		
+		contentPane.addMouseListener(new MouseListener() {
+		public void mouseClicked(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			outputText.append("X: " + x + ", Y: " + y + "\n");
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	});
+		
 	}
 	
 	
@@ -163,10 +196,10 @@ public class ClientFrame extends JFrame implements EelsAndEscalatorsInterface, R
 	}
 	
 	// HELPER FUNCTION FOR RESIZING SPRITES
-	public ImageIcon rescaleSprite(URL path) {
+	public ImageIcon rescaleSprite(URL path, int h, int w) {
 		ImageIcon plSprite = new ImageIcon(path); 
 		Image image = plSprite.getImage(); 
-		image = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+		image = image.getScaledInstance(h, w, Image.SCALE_SMOOTH);
 		return new ImageIcon(image);
 	}
 	
